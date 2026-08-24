@@ -1,0 +1,22 @@
+---
+title: Custom Embed Branding
+description: Configure FxEmbed to use a custom branding for your domain.
+---
+
+:::caution
+This feature is currently disabled due to a caching bug. See https://github.com/FxEmbed/FxEmbed/issues/2025 for more details.
+:::
+
+## Custom branding parameters
+
+If you want to use FxEmbed on your own domain and don't want to run your own branded instance, you can append branding overrides directly to the embed URL itself when you redirect traffic through FxEmbed.
+
+- `brandingName`: display name shown in oEmbed responses and page metadata
+- `brandingIcon`: custom icon URL (used as the activity icon)
+- `brandingRedirectUrl`: alternate redirect URL for this request
+
+Example:
+
+```text
+https://fxtwitter.com/i/status/1234567890?brandingName=CustomX&brandingIcon=https%3A%2F%2Fcdn.customx.com%2Ficon.png&brandingRedirectUrl=https%3A%2F%2Fhello.customx.com
+```

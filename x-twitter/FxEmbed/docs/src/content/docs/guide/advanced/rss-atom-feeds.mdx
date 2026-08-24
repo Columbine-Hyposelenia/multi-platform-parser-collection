@@ -1,0 +1,75 @@
+---
+title: RSS & Atom feeds
+description: Subscribe to X/Twitter and Bluesky profiles with RSS 2.0 or Atom from FxTwitter, FixupX, and FxBluesky.
+---
+
+FxEmbed exposes **RSS 2.0** and **Atom** feeds for **X/Twitter** and **Bluesky** profiles. Use them in feed readers, automation, or any client that polls syndication URLs.
+
+Many readers can automatically detect the feed from an FxTwitter / FixupX / FxBluesky link, but if not, you can also manually add and customize the feed you want to your reader.
+
+## Feed URLs
+
+### X / Twitter
+
+| Format   | All Recent Posts                               |
+| -------- | ---------------------------------------------- |
+| **RSS**  | `https://fxtwitter.com/{handle}/feed.xml`      |
+| **Atom** | `https://fxtwitter.com/{handle}/feed.atom.xml` |
+
+| Format   | Media-only Posts                                |
+| -------- | ----------------------------------------------- |
+| **RSS**  | `https://fxtwitter.com/{handle}/media.xml`      |
+| **Atom** | `https://fxtwitter.com/{handle}/media.atom.xml` |
+
+Replace the host with your deployment’s X realm (for example `fixupx.com` for `x.com` links).
+
+### Bluesky
+
+Paths use `/profile/` before the handle, matching other FxBluesky profile URLs.
+
+| Format   | All Recent Posts                                    |
+| -------- | --------------------------------------------------- |
+| **RSS**  | `https://fxbsky.app/profile/{handle}/feed.xml`      |
+| **Atom** | `https://fxbsky.app/profile/{handle}/feed.atom.xml` |
+
+| Format   | Media-only Posts                                     |
+| -------- | ---------------------------------------------------- |
+| **RSS**  | `https://fxbsky.app/profile/{handle}/media.xml`      |
+| **Atom** | `https://fxbsky.app/profile/{handle}/media.atom.xml` |
+
+`{handle}` is the Bluesky handle (for example `user.bsky.social`), with or without a leading `@` in the path segment.
+
+- **Timeline feeds** include recent posts (original posts and reposts as returned by the profile timeline API).
+- **Media feeds** only include posts that have photos or videos—useful if you want a gallery-style stream.
+
+## Query parameters
+
+All parameters are optional.
+
+| Parameter                       | Applies to         | Description                                                                                                                                                                  |
+| ------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `count`                         | Timeline and media | Number of items to fetch, **1–100** (default **90**).                                                                                                                        |
+| `with_replies` or `withReplies` | Timeline only      | Include reply posts.                                                                                                                                                         |
+| `safe`                          | Timeline and media | Hides posts (and quoted bodies) marked sensitive.                                                                                                                            |
+| `lang` or `language`            | Timeline and media | Requests for automatic translation of content when available. Currently it's a bit iffy whether it works or not, so don't be surprised if things aren't translated just yet. |
+
+Example (X):
+
+```
+https://fxtwitter.com/example/feed.xml?count=50&safe=1
+```
+
+Example (Bluesky):
+
+```
+https://fxbsky.app/profile/user.bsky.social/feed.xml?count=50&safe=1
+```
+
+Query strings are preserved in the feed’s self-link metadata so subscribers and validators see a stable identity per URL variant.
+
+## What readers get
+
+- **RSS** is RSS 2.0 with an Atom `rel="self"` link, `guid` per item (permalink to the post on X or Bluesky), and HTML `description` content (CDATA). Video items use **Media RSS** (`media:thumbnail`) when a poster image exists.
+- **Atom** is RFC 4287 with `content type="html"` entries and a feed-level author when a display name is available.
+- **Channel artwork**: profile avatar is exposed as RSS `<image>` and Atom `<icon>` when present.
+- **Enclosures**: the first suitable attachment is attached as `enclosure` / `rel="enclosure"`—photos and GIFs as images, videos as **progressive MP4** (not HLS) when available. If a post has no media but has a link preview card with an image, that image may be used as the enclosure.

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "nodenext",
+    "target": "ES2024",
+    "lib": ["ES2024"],
+    "alwaysStrict": true,
+    "strict": true,
+    "preserveConstEnums": true,
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "types": [
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers",
+      "./src/types/types.d.ts",
+      "./packages/atmosphere/src/raw/vendor/twitter.d.ts",
+      "./packages/atmosphere/src/raw/vendor/tiktok.d.ts",
+      "./packages/atmosphere/src/raw/vendor/bluesky.d.ts",
+      "./packages/atmosphere/src/raw/vendor/mastodon.d.ts",
+      "./src/types/env.d.ts"
+    ]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "test"]
+}

@@ -1,0 +1,207 @@
+from __future__ import annotations
+
+import re
+from pathlib import Path
+from typing import Any, cast
+from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse
+
+from loguru import logger
+
+from ...provider_api.bilibili import BiliAPI, BiliDynamic
+from ...types import (
+    DownloadResult,
+    ImageParseResult,
+    ImageRef,
+    LivePhotoRef,
+    ParseError,
+    Platform,
+    ProgressCallback,
+    VideoParseResult,
+    VideoRef,
+)
+from ...utils.helpers import UA
+from ..base.base import BaseParser
+from ..base.ytdlp import YtParser, YtVideoParseResult
+
+
+class BiliParse(BaseParser):
+    __platform__ = Platform.BILIBILI
+    __supported_type__ = ["视频", "动态"]
+    __match__ = r"^(http(s)?://)?((((w){3}.|(m).|(t).)?bilibili\.com)/(video|opus|\b\d{18,19}\b)|b23.tv|bili2233.cn).*"
+    __reserved_parameters__ = ["p"]
+    __redirect_keywords__ = ["b23.tv", "bili2233.cn"]
+
+    async def _do_parse(self, raw_url: str) -> YtVideoParseResult | BiliVideoParseResult | ImageParseResult:
+        if await self.is_dynamic(raw_url):
+            dynamic = await self.get_dynamic_info(raw_url)
+            content = self.hashtag_handler(dynamic.content or "")
+            photos: list[LivePhotoRef | ImageRef] = []
+            if dynamic.images:
+                for i in dynamic.images:
+                    if i.live_url:
+                        photos.append(LivePhotoRef(url=i.url, video_url=i.live_url, width=i.width, height=i.height))
+                    else:
+                        photos.append(ImageRef(url=i.url, width=i.width, height=i.height))
+            return ImageParseResult(
+                title=dynamic.title or "",
+                content=content,
+                photo=photos,
+            )
+        else:
+            try:
+                return await self.bili_api_parse(raw_url)
+            except Exception as e:
+                logger.opt(exception=e).warning("Bilibili API 解析失败, 尝试 yt-dlp 解析")
+                try:
+                    return await self.ytp_parse(raw_url)
+                except Exception as e:
+                    raise ParseError("Bilibili 解析失败") from e
+
+    @staticmethod
+    def _is_bvid(url: str) -> bool:
+        if url.lower().startswith("bv"):
+            return True
+        else:
+            return False
+
+    @classmethod
+    def match(cls, text: str) -> bool:
+        if cls._is_bvid(text):
+            return True
+        else:
+            return super().match(text)
+
+    async def get_raw_url(self, url: str, **kwargs: Any) -> str:
+        """获取原始链接"""
+        if self._is_bvid(url):
+            return f"https://www.bilibili.com/video/{url}"
+        else:
+            raw_url = await super().get_raw_url(url, **kwargs)
+            u = urlparse(raw_url)
+            q = urlencode([(k, v) for k, v in parse_qsl(u.query) if (k, v) != ("p", "1")])
+            return u._replace(query=q).geturl()
+
+    @staticmethod
+    async def is_dynamic(url: str) -> str | None:
+        """是动态"""
+        if re.search(r"\b\d{18,19}\b", url):
+            return url
+        return None
+
+    async def get_dynamic_info(self, url: str) -> BiliDynamic:
+        try:
+            async with BiliAPI(proxy=self.proxy) as bili:
+                dynamic_info = await bili.get_dynamic_info(url, cookie=self.cookie.get_value())
+        except Exception as e:
+            if "风控" in str(e):
+                raise ParseError(f"账号风控\n使用的cookie: {self.cookie}") from e
+            raise ParseError(str(e)) from e
+        else:
+            return cast(BiliDynamic, dynamic_info)
+
+    async def bili_api_parse(self, url: str) -> BiliVideoParseResult | ImageParseResult:
+        async with BiliAPI(proxy=self.proxy) as bili:
+            video_info = await bili.get_video_info(url)
+
+            if not (data := video_info.get("data")):
+                raise ParseError("获取视频信息失败")
+
+            p = int(parse_qs(urlparse(url).query).get("p", ["1"])[0])
+            view = data["View"]
+
+            cid = view["cid"]
+            duration = view["duration"]
+            dimension = view["dimension"]
+            desc = view["desc"]
+
+            if p != 1 and (pages := view.get("pages")):
+                if page_info := next((i for i in pages if i["page"] == p), None):
+                    cid = page_info["cid"]
+                    duration = page_info["duration"]
+                    dimension = page_info["dimension"]
+
+            b3, b4 = await bili.get_buvid()
+            video_playurl = await bili.get_video_playurl(url, cid, b3, b4)
+
+        durl = video_playurl["data"]["durl"][0]
+        video_url = self.change_source(durl["backup_url"][0]) if durl.get("backup_url") else durl["url"]
+        content = desc.strip()
+        if content == "-":
+            content = ""
+        return BiliVideoParseResult(
+            title=data["View"]["title"],
+            content=content,
+            video=VideoRef(
+                url=video_url,
+                thumb_url=data["View"]["pic"],
+                duration=duration,
+                width=dimension.get("width", 0),
+                height=dimension.get("height", 0),
+            ),
+        )
+
+    async def ytp_parse(self, url: str) -> YtVideoParseResult:
+        return await BiliYtParse(proxy=self.proxy, cookie=self.cookie)._do_parse(url)
+
+    @staticmethod
+    def change_source(url: str) -> str:
+        return re.sub(
+            r"upos-.*.(bilivideo.com|mirrorakam.akamaized.net)",
+            "upos-sz-upcdnbda2.bilivideo.com",
+            url,
+        )
+
+    @staticmethod
+    def hashtag_handler(desc: str) -> str:
+        if not desc:
+            return ""
+        hashtags = re.findall(r" ?#[^#]+# ?", desc)
+        for hashtag in hashtags:
+            desc = desc.replace(hashtag, f" {hashtag.strip().removesuffix('#')} ")
+        return desc.strip()
+
+
+class BiliYtParse(YtParser, register=False):
+    @property
+    def _video_parse_result_type(self) -> type[BiliYtVideoParseResult]:
+        return BiliYtVideoParseResult
+
+
+class BiliYtVideoParseResult(YtVideoParseResult):
+    @property
+    def cli_args(self) -> list[str]:
+        return [
+            *super().cli_args,
+            "-S",
+            "+codec:h264,filesize~500M",
+        ]
+
+
+class BiliVideoParseResult(VideoParseResult):
+    async def _do_download(
+        self,
+        *,
+        output_dir: Path,
+        callback: ProgressCallback | None = None,
+        callback_args: tuple = (),
+        callback_kwargs: dict | None = None,
+        proxy: str | None = None,
+        headers: dict | None = None,
+        connections: int = 4,
+    ) -> DownloadResult:
+        headers = {"referer": "https://www.bilibili.com", "User-Agent": UA}
+        return await super()._do_download(
+            output_dir=output_dir,
+            callback=callback,
+            callback_args=callback_args,
+            callback_kwargs=callback_kwargs,
+            proxy=proxy,
+            headers=headers,
+            connections=connections,
+        )
+
+
+__all__ = [
+    "BiliParse",
+    "BiliVideoParseResult",
+]

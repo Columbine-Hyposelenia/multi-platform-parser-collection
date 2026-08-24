@@ -1,0 +1,4334 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FxBluesky API",
+    "version": "2.0.0",
+    "description": "FxBluesky API v2"
+  },
+  "servers": [
+    {
+      "url": "https://api.fxbsky.app",
+      "description": "FxBluesky API host"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "SocialThread": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "HTTP-style status; mirrors response status code"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/APITwitterStatus"
+              },
+              {
+                "$ref": "#/components/schemas/APIStatusTombstone"
+              },
+              {
+                "nullable": true
+              }
+            ],
+            "description": "Focal post, or a tombstone when the post is unavailable"
+          },
+          "thread": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/APITwitterStatus"
+                },
+                {
+                  "$ref": "#/components/schemas/APIStatusTombstone"
+                }
+              ]
+            }
+          },
+          "author": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/APIUser"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": ["code", "status", "thread", "author"]
+      },
+      "APITwitterStatus": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["status"],
+            "description": "Discriminator: single post/status (API v2)."
+          },
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "created_timestamp": {
+            "type": "number"
+          },
+          "likes": {
+            "type": "number"
+          },
+          "reposts": {
+            "type": "number"
+          },
+          "quotes": {
+            "type": "number"
+          },
+          "replies": {
+            "type": "number"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "object",
+                "title": "APITwitterStatus (recursive)",
+                "description": "Recursive reference — same shape as `APITwitterStatus`."
+              },
+              {
+                "$ref": "#/components/schemas/APIStatusTombstone"
+              }
+            ]
+          },
+          "poll": {
+            "type": "object",
+            "properties": {
+              "choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "number"
+                    },
+                    "percentage": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["label", "count", "percentage"]
+                }
+              },
+              "total_votes": {
+                "type": "number"
+              },
+              "ends_at": {
+                "type": "string"
+              },
+              "time_left_en": {
+                "type": "string"
+              }
+            },
+            "required": ["choices", "total_votes", "ends_at", "time_left_en"]
+          },
+          "author": {
+            "$ref": "#/components/schemas/APIUser"
+          },
+          "media": {
+            "type": "object",
+            "properties": {
+              "external": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["video"]
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "thumbnail_url": {
+                    "type": "string"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "width": {
+                    "type": "number"
+                  }
+                },
+                "required": ["type", "url"]
+              },
+              "photos": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["photo", "gif"]
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "type": "number"
+                    },
+                    "height": {
+                      "type": "number"
+                    },
+                    "transcode_url": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "altText": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "url", "width", "height"]
+                }
+              },
+              "videos": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["video", "gif"]
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "type": "number"
+                    },
+                    "height": {
+                      "type": "number"
+                    },
+                    "thumbnail_url": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "transcode_url": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "duration": {
+                      "type": "number"
+                    },
+                    "filesize": {
+                      "type": "number"
+                    },
+                    "formats": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "container": {
+                            "type": "string",
+                            "enum": ["mp4", "webm", "m3u8"]
+                          },
+                          "codec": {
+                            "type": "string",
+                            "enum": ["h264", "hevc", "vp9", "av1"]
+                          },
+                          "bitrate": {
+                            "type": "number"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "size": {
+                            "type": "number"
+                          },
+                          "height": {
+                            "type": "number"
+                          },
+                          "width": {
+                            "type": "number"
+                          }
+                        },
+                        "required": ["url"]
+                      }
+                    },
+                    "publisher": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/APIUser"
+                        },
+                        {
+                          "nullable": true
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["type", "url", "width", "height", "duration", "formats"]
+                }
+              },
+              "all": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["photo", "gif"]
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "transcode_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "altText": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["type", "url", "width", "height"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["video", "gif"]
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "thumbnail_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "transcode_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "duration": {
+                          "type": "number"
+                        },
+                        "filesize": {
+                          "type": "number"
+                        },
+                        "formats": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "container": {
+                                "type": "string",
+                                "enum": ["mp4", "webm", "m3u8"]
+                              },
+                              "codec": {
+                                "type": "string",
+                                "enum": ["h264", "hevc", "vp9", "av1"]
+                              },
+                              "bitrate": {
+                                "type": "number"
+                              },
+                              "url": {
+                                "type": "string"
+                              },
+                              "size": {
+                                "type": "number"
+                              },
+                              "height": {
+                                "type": "number"
+                              },
+                              "width": {
+                                "type": "number"
+                              }
+                            },
+                            "required": ["url"]
+                          }
+                        },
+                        "publisher": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/APIUser"
+                            },
+                            {
+                              "nullable": true
+                            }
+                          ]
+                        }
+                      },
+                      "required": ["type", "url", "width", "height", "duration", "formats"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["mosaic_photo"]
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "formats": {
+                          "type": "object",
+                          "properties": {
+                            "webp": {
+                              "type": "string"
+                            },
+                            "jpeg": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["webp", "jpeg"]
+                        }
+                      },
+                      "required": ["type", "url", "width", "height", "formats"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        }
+                      },
+                      "required": ["type", "url", "width", "height"]
+                    }
+                  ]
+                }
+              },
+              "mosaic": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "format": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["mosaic_photo"]
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "formats": {
+                    "type": "object",
+                    "properties": {
+                      "webp": {
+                        "type": "string"
+                      },
+                      "jpeg": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["webp", "jpeg"]
+                  }
+                },
+                "required": ["type", "url", "width", "height", "formats"]
+              },
+              "broadcast": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": ["LIVE", "ENDED"]
+                  },
+                  "broadcaster": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "display_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["username", "display_name", "id"]
+                  },
+                  "stream": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["url"]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": ["landscape", "portrait"]
+                  },
+                  "broadcast_id": {
+                    "type": "string"
+                  },
+                  "media_id": {
+                    "type": "string"
+                  },
+                  "media_key": {
+                    "type": "string"
+                  },
+                  "is_high_latency": {
+                    "type": "boolean"
+                  },
+                  "thumbnail": {
+                    "type": "object",
+                    "properties": {
+                      "original": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "small": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "medium": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "large": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "x_large": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      }
+                    },
+                    "required": ["original"]
+                  }
+                },
+                "required": [
+                  "url",
+                  "width",
+                  "height",
+                  "state",
+                  "broadcaster",
+                  "title",
+                  "source",
+                  "orientation",
+                  "broadcast_id",
+                  "media_id",
+                  "media_key",
+                  "is_high_latency",
+                  "thumbnail"
+                ]
+              }
+            }
+          },
+          "raw_text": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "display_text_range": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "facets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Facet kind: e.g. url, mention, hashtag, bold, media, custom_emoji (Mastodon custom emoji image)"
+                    },
+                    "indices": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "description": "Start and end UTF-16 indices"
+                    },
+                    "original": {
+                      "type": "string"
+                    },
+                    "replacement": {
+                      "type": "string"
+                    },
+                    "display": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "indices"]
+                }
+              }
+            },
+            "required": ["text", "display_text_range", "facets"]
+          },
+          "lang": {
+            "type": "string",
+            "nullable": true
+          },
+          "translation": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "source_lang": {
+                "type": "string"
+              },
+              "source_lang_en": {
+                "type": "string"
+              },
+              "target_lang": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": ["text", "source_lang", "source_lang_en", "target_lang", "provider"]
+          },
+          "possibly_sensitive": {
+            "type": "boolean"
+          },
+          "replying_to": {
+            "$ref": "#/components/schemas/APIReplyingTo"
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "embed_card": {
+            "type": "string",
+            "enum": ["tweet", "summary", "summary_large_image", "player"]
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["twitter"]
+          },
+          "views": {
+            "type": "number",
+            "nullable": true
+          },
+          "bookmarks": {
+            "type": "number",
+            "nullable": true
+          },
+          "community": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string"
+              },
+              "search_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "is_nsfw": {
+                "type": "boolean"
+              },
+              "topic": {
+                "type": "string",
+                "nullable": true
+              },
+              "admin": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/APIUser"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              },
+              "creator": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/APIUser"
+                  },
+                  {
+                    "nullable": true
+                  }
+                ]
+              },
+              "join_policy": {
+                "type": "string",
+                "enum": ["Open", "Closed"]
+              },
+              "invites_policy": {
+                "type": "string",
+                "enum": ["MemberInvitesAllowed", "MemberInvitesDisabled"]
+              },
+              "is_pinned": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "description",
+              "created_at",
+              "search_tags",
+              "is_nsfw",
+              "topic",
+              "join_policy",
+              "invites_policy",
+              "is_pinned"
+            ]
+          },
+          "article": {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "string"
+              },
+              "modified_at": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "preview_text": {
+                "type": "string"
+              },
+              "cover_media": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "media_key": {
+                    "type": "string"
+                  },
+                  "media_id": {
+                    "type": "string"
+                  },
+                  "media_info": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "__typename": {
+                            "type": "string",
+                            "enum": ["ApiImage"]
+                          },
+                          "original_img_height": {
+                            "type": "number"
+                          },
+                          "original_img_width": {
+                            "type": "number"
+                          },
+                          "original_img_url": {
+                            "type": "string"
+                          },
+                          "color_info": {
+                            "type": "object",
+                            "properties": {
+                              "palette": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "percentage": {
+                                      "type": "number"
+                                    },
+                                    "rgb": {
+                                      "type": "object",
+                                      "properties": {
+                                        "red": {
+                                          "type": "number"
+                                        },
+                                        "green": {
+                                          "type": "number"
+                                        },
+                                        "blue": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": ["red", "green", "blue"]
+                                    }
+                                  },
+                                  "required": ["percentage", "rgb"]
+                                }
+                              }
+                            },
+                            "required": ["palette"]
+                          }
+                        },
+                        "required": [
+                          "__typename",
+                          "original_img_height",
+                          "original_img_width",
+                          "original_img_url",
+                          "color_info"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "__typename": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["ApiVideo"]
+                              },
+                              {
+                                "type": "string",
+                                "enum": ["ApiGif"]
+                              }
+                            ]
+                          },
+                          "type": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": ["video"]
+                              },
+                              {
+                                "type": "string",
+                                "enum": ["animated_gif"]
+                              }
+                            ]
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "id_str": {
+                            "type": "string"
+                          },
+                          "ext_alt_text": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "ext_media_color": {
+                            "type": "object",
+                            "properties": {
+                              "palette": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "percentage": {
+                                      "type": "number"
+                                    },
+                                    "rgb": {
+                                      "type": "object",
+                                      "properties": {
+                                        "red": {
+                                          "type": "number"
+                                        },
+                                        "green": {
+                                          "type": "number"
+                                        },
+                                        "blue": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": ["red", "green", "blue"]
+                                    }
+                                  },
+                                  "required": ["percentage", "rgb"]
+                                }
+                              }
+                            },
+                            "required": ["palette"]
+                          },
+                          "media_url": {
+                            "type": "string"
+                          },
+                          "media_url_https": {
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "display_url": {
+                            "type": "string"
+                          },
+                          "expanded_url": {
+                            "type": "string"
+                          },
+                          "original_info": {
+                            "type": "object",
+                            "properties": {
+                              "height": {
+                                "type": "number"
+                              },
+                              "width": {
+                                "type": "number"
+                              }
+                            },
+                            "required": ["height", "width"]
+                          },
+                          "sizes": {
+                            "type": "object",
+                            "properties": {
+                              "original": {
+                                "type": "object",
+                                "properties": {
+                                  "h": {
+                                    "type": "number"
+                                  },
+                                  "resize": {
+                                    "type": "string",
+                                    "enum": ["fit"]
+                                  },
+                                  "w": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["h", "resize", "w"]
+                              }
+                            },
+                            "required": ["original"]
+                          },
+                          "video_info": {
+                            "type": "object",
+                            "properties": {
+                              "aspect_ratio": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                },
+                                "minItems": 2,
+                                "maxItems": 2
+                              },
+                              "duration_millis": {
+                                "type": "number"
+                              },
+                              "variants": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "bitrate": {
+                                      "type": "number"
+                                    },
+                                    "content_type": {
+                                      "type": "string"
+                                    },
+                                    "url": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": ["bitrate", "content_type", "url"]
+                                }
+                              }
+                            },
+                            "required": ["aspect_ratio", "duration_millis", "variants"]
+                          }
+                        },
+                        "required": [
+                          "__typename",
+                          "type",
+                          "id",
+                          "id_str",
+                          "ext_alt_text",
+                          "ext_media_color",
+                          "media_url",
+                          "media_url_https",
+                          "url",
+                          "display_url",
+                          "expanded_url",
+                          "original_info",
+                          "sizes",
+                          "video_info"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": ["id", "media_key", "media_id", "media_info"]
+              },
+              "content": {
+                "type": "object",
+                "properties": {
+                  "blocks": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "nullable": true
+                          }
+                        },
+                        "entityRanges": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "number"
+                              },
+                              "length": {
+                                "type": "number"
+                              },
+                              "offset": {
+                                "type": "number"
+                              }
+                            },
+                            "required": ["key", "length", "offset"]
+                          }
+                        },
+                        "inlineStyleRanges": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "length": {
+                                "type": "number"
+                              },
+                              "offset": {
+                                "type": "number"
+                              },
+                              "style": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["length", "offset", "style"]
+                          }
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "data",
+                        "entityRanges",
+                        "inlineStyleRanges",
+                        "text",
+                        "type"
+                      ]
+                    },
+                    "default": []
+                  },
+                  "entityMap": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "enum": ["MARKDOWN"]
+                                },
+                                "mutability": {
+                                  "type": "string",
+                                  "enum": ["Mutable"]
+                                },
+                                "data": {
+                                  "type": "object",
+                                  "properties": {
+                                    "entityKey": {
+                                      "type": "string"
+                                    },
+                                    "markdown": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": ["entityKey", "markdown"]
+                                }
+                              },
+                              "required": ["type", "mutability", "data"]
+                            }
+                          },
+                          "required": ["key", "value"]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "enum": ["MEDIA"]
+                                },
+                                "mutability": {
+                                  "type": "string",
+                                  "enum": ["Immutable"]
+                                },
+                                "data": {
+                                  "type": "object",
+                                  "properties": {
+                                    "entityKey": {
+                                      "type": "string"
+                                    },
+                                    "mediaItems": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "localMediaId": {
+                                            "type": "string"
+                                          },
+                                          "mediaCategory": {
+                                            "type": "string"
+                                          },
+                                          "mediaId": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": ["localMediaId", "mediaCategory", "mediaId"]
+                                      }
+                                    }
+                                  },
+                                  "required": ["entityKey", "mediaItems"]
+                                }
+                              },
+                              "required": ["type", "mutability", "data"]
+                            }
+                          },
+                          "required": ["key", "value"]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "enum": ["TWEET"]
+                                },
+                                "mutability": {
+                                  "type": "string",
+                                  "enum": ["Immutable"]
+                                },
+                                "data": {
+                                  "type": "object",
+                                  "properties": {
+                                    "tweetId": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": ["tweetId"]
+                                }
+                              },
+                              "required": ["type", "mutability", "data"]
+                            }
+                          },
+                          "required": ["key", "value"]
+                        }
+                      ]
+                    },
+                    "default": []
+                  }
+                }
+              },
+              "media_entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "media_key": {
+                      "type": "string"
+                    },
+                    "media_id": {
+                      "type": "string"
+                    },
+                    "media_info": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "__typename": {
+                              "type": "string",
+                              "enum": ["ApiImage"]
+                            },
+                            "original_img_height": {
+                              "type": "number"
+                            },
+                            "original_img_width": {
+                              "type": "number"
+                            },
+                            "original_img_url": {
+                              "type": "string"
+                            },
+                            "color_info": {
+                              "type": "object",
+                              "properties": {
+                                "palette": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "percentage": {
+                                        "type": "number"
+                                      },
+                                      "rgb": {
+                                        "type": "object",
+                                        "properties": {
+                                          "red": {
+                                            "type": "number"
+                                          },
+                                          "green": {
+                                            "type": "number"
+                                          },
+                                          "blue": {
+                                            "type": "number"
+                                          }
+                                        },
+                                        "required": ["red", "green", "blue"]
+                                      }
+                                    },
+                                    "required": ["percentage", "rgb"]
+                                  }
+                                }
+                              },
+                              "required": ["palette"]
+                            }
+                          },
+                          "required": [
+                            "__typename",
+                            "original_img_height",
+                            "original_img_width",
+                            "original_img_url",
+                            "color_info"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "__typename": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": ["ApiVideo"]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": ["ApiGif"]
+                                }
+                              ]
+                            },
+                            "type": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": ["video"]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": ["animated_gif"]
+                                }
+                              ]
+                            },
+                            "id": {
+                              "type": "string"
+                            },
+                            "id_str": {
+                              "type": "string"
+                            },
+                            "ext_alt_text": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "ext_media_color": {
+                              "type": "object",
+                              "properties": {
+                                "palette": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "percentage": {
+                                        "type": "number"
+                                      },
+                                      "rgb": {
+                                        "type": "object",
+                                        "properties": {
+                                          "red": {
+                                            "type": "number"
+                                          },
+                                          "green": {
+                                            "type": "number"
+                                          },
+                                          "blue": {
+                                            "type": "number"
+                                          }
+                                        },
+                                        "required": ["red", "green", "blue"]
+                                      }
+                                    },
+                                    "required": ["percentage", "rgb"]
+                                  }
+                                }
+                              },
+                              "required": ["palette"]
+                            },
+                            "media_url": {
+                              "type": "string"
+                            },
+                            "media_url_https": {
+                              "type": "string"
+                            },
+                            "url": {
+                              "type": "string"
+                            },
+                            "display_url": {
+                              "type": "string"
+                            },
+                            "expanded_url": {
+                              "type": "string"
+                            },
+                            "original_info": {
+                              "type": "object",
+                              "properties": {
+                                "height": {
+                                  "type": "number"
+                                },
+                                "width": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": ["height", "width"]
+                            },
+                            "sizes": {
+                              "type": "object",
+                              "properties": {
+                                "original": {
+                                  "type": "object",
+                                  "properties": {
+                                    "h": {
+                                      "type": "number"
+                                    },
+                                    "resize": {
+                                      "type": "string",
+                                      "enum": ["fit"]
+                                    },
+                                    "w": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": ["h", "resize", "w"]
+                                }
+                              },
+                              "required": ["original"]
+                            },
+                            "video_info": {
+                              "type": "object",
+                              "properties": {
+                                "aspect_ratio": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "number"
+                                  },
+                                  "minItems": 2,
+                                  "maxItems": 2
+                                },
+                                "duration_millis": {
+                                  "type": "number"
+                                },
+                                "variants": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "bitrate": {
+                                        "type": "number"
+                                      },
+                                      "content_type": {
+                                        "type": "string"
+                                      },
+                                      "url": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": ["bitrate", "content_type", "url"]
+                                  }
+                                }
+                              },
+                              "required": ["aspect_ratio", "duration_millis", "variants"]
+                            }
+                          },
+                          "required": [
+                            "__typename",
+                            "type",
+                            "id",
+                            "id_str",
+                            "ext_alt_text",
+                            "ext_media_color",
+                            "media_url",
+                            "media_url_https",
+                            "url",
+                            "display_url",
+                            "expanded_url",
+                            "original_info",
+                            "sizes",
+                            "video_info"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["id", "media_key", "media_id", "media_info"]
+                }
+              }
+            },
+            "required": [
+              "created_at",
+              "id",
+              "title",
+              "preview_text",
+              "cover_media",
+              "content",
+              "media_entities"
+            ]
+          },
+          "is_note_tweet": {
+            "type": "boolean"
+          },
+          "community_note": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "facets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Facet kind: e.g. url, mention, hashtag, bold, media, custom_emoji (Mastodon custom emoji image)"
+                    },
+                    "indices": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "description": "Start and end UTF-16 indices"
+                    },
+                    "original": {
+                      "type": "string"
+                    },
+                    "replacement": {
+                      "type": "string"
+                    },
+                    "display": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "indices"]
+                }
+              }
+            },
+            "required": ["text", "facets"]
+          },
+          "reposted_by": {
+            "$ref": "#/components/schemas/APIRepostedBy"
+          },
+          "card": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "domain": {
+                "type": "string"
+              },
+              "card_name": {
+                "type": "string"
+              },
+              "image": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "alt": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": ["url"]
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "url",
+          "text",
+          "created_at",
+          "created_timestamp",
+          "likes",
+          "reposts",
+          "quotes",
+          "replies",
+          "author",
+          "media",
+          "raw_text",
+          "lang",
+          "possibly_sensitive",
+          "replying_to",
+          "source",
+          "embed_card",
+          "provider",
+          "is_note_tweet",
+          "community_note",
+          "reposted_by"
+        ]
+      },
+      "APIStatusTombstone": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["tombstone"],
+            "description": "Placeholder for an unavailable post (quote/thread)."
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["twitter", "bluesky", "mastodon", "tiktok"]
+          },
+          "reason": {
+            "type": "string",
+            "enum": ["deleted", "suspended", "private", "blocked", "unavailable"],
+            "description": "Why the post is unavailable"
+          },
+          "message": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["profile"],
+                "description": "Discriminator: full user profile (API v2)."
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "screen_name": {
+                "type": "string"
+              },
+              "avatar_url": {
+                "type": "string",
+                "nullable": true
+              },
+              "banner_url": {
+                "type": "string",
+                "nullable": true
+              },
+              "description": {
+                "type": "string"
+              },
+              "raw_description": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "facets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "Facet kind: e.g. url, mention, hashtag, bold, media, custom_emoji (Mastodon custom emoji image)"
+                        },
+                        "indices": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "description": "Start and end UTF-16 indices"
+                        },
+                        "original": {
+                          "type": "string"
+                        },
+                        "replacement": {
+                          "type": "string"
+                        },
+                        "display": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["type", "indices"]
+                    }
+                  }
+                },
+                "required": ["text", "facets"]
+              },
+              "location": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "protected": {
+                "type": "boolean"
+              },
+              "followers": {
+                "type": "number"
+              },
+              "following": {
+                "type": "number"
+              },
+              "statuses": {
+                "type": "number"
+              },
+              "media_count": {
+                "type": "number"
+              },
+              "likes": {
+                "type": "number"
+              },
+              "joined": {
+                "type": "string"
+              },
+              "website": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "display_url": {
+                    "type": "string"
+                  }
+                },
+                "required": ["url", "display_url"]
+              },
+              "birthday": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "day": {
+                    "type": "number"
+                  },
+                  "month": {
+                    "type": "number"
+                  },
+                  "year": {
+                    "type": "number"
+                  }
+                }
+              },
+              "verification": {
+                "type": "object",
+                "properties": {
+                  "verified": {
+                    "type": "boolean"
+                  },
+                  "type": {
+                    "type": "string",
+                    "nullable": true,
+                    "enum": ["organization", "government", "individual", null]
+                  },
+                  "verified_at": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "identity_verified": {
+                    "type": "boolean"
+                  },
+                  "verified_by": {
+                    "type": "string"
+                  }
+                },
+                "required": ["verified", "type"]
+              },
+              "about_account": {
+                "$ref": "#/components/schemas/APIAboutAccount"
+              },
+              "profile_embed": {
+                "type": "boolean"
+              }
+            }
+          },
+          "at_uri": {
+            "type": "string"
+          },
+          "cid": {
+            "type": "string"
+          }
+        },
+        "required": ["type", "provider", "reason", "message"]
+      },
+      "APIAboutAccount": {
+        "type": "object",
+        "properties": {
+          "based_in": {
+            "type": "string",
+            "nullable": true
+          },
+          "location_accurate": {
+            "type": "boolean"
+          },
+          "created_country_accurate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "username_changes": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              },
+              "last_changed_at": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["count", "last_changed_at"]
+          }
+        }
+      },
+      "APIUser": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["profile"],
+            "description": "Discriminator: full user profile (API v2)."
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "screen_name": {
+            "type": "string"
+          },
+          "avatar_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "banner_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "raw_description": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "facets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Facet kind: e.g. url, mention, hashtag, bold, media, custom_emoji (Mastodon custom emoji image)"
+                    },
+                    "indices": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "description": "Start and end UTF-16 indices"
+                    },
+                    "original": {
+                      "type": "string"
+                    },
+                    "replacement": {
+                      "type": "string"
+                    },
+                    "display": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "indices"]
+                }
+              }
+            },
+            "required": ["text", "facets"]
+          },
+          "location": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "protected": {
+            "type": "boolean"
+          },
+          "followers": {
+            "type": "number"
+          },
+          "following": {
+            "type": "number"
+          },
+          "statuses": {
+            "type": "number"
+          },
+          "media_count": {
+            "type": "number"
+          },
+          "likes": {
+            "type": "number"
+          },
+          "joined": {
+            "type": "string"
+          },
+          "website": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "display_url": {
+                "type": "string"
+              }
+            },
+            "required": ["url", "display_url"]
+          },
+          "birthday": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "day": {
+                "type": "number"
+              },
+              "month": {
+                "type": "number"
+              },
+              "year": {
+                "type": "number"
+              }
+            }
+          },
+          "verification": {
+            "type": "object",
+            "properties": {
+              "verified": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "nullable": true,
+                "enum": ["organization", "government", "individual", null]
+              },
+              "verified_at": {
+                "type": "string",
+                "nullable": true
+              },
+              "identity_verified": {
+                "type": "boolean"
+              },
+              "verified_by": {
+                "type": "string"
+              }
+            },
+            "required": ["verified", "type"]
+          },
+          "about_account": {
+            "$ref": "#/components/schemas/APIAboutAccount"
+          },
+          "profile_embed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "name",
+          "screen_name",
+          "avatar_url",
+          "banner_url",
+          "description",
+          "raw_description",
+          "location",
+          "url",
+          "protected",
+          "followers",
+          "following",
+          "statuses",
+          "media_count",
+          "likes",
+          "joined",
+          "website"
+        ]
+      },
+      "APIReplyingTo": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "screen_name": {
+            "type": "string",
+            "description": "Handle or account id used in permalinks (@user on X)."
+          },
+          "status": {
+            "type": "string",
+            "description": "Parent post id (X: snowflake; Bluesky: record key)."
+          },
+          "url": {
+            "type": "string",
+            "description": "Permalink to the parent post when known."
+          },
+          "profile_url": {
+            "type": "string",
+            "description": "Permalink to the parent author profile when known."
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Display name of the parent author when known."
+          }
+        },
+        "required": ["screen_name", "status"]
+      },
+      "APIRepostedBy": {
+        "type": "object",
+        "nullable": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "screen_name": {
+            "type": "string"
+          },
+          "avatar_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name", "screen_name"]
+      },
+      "ApiQueryError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "enum": [400]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "APIUserListResults": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/APIUser"
+            }
+          },
+          "cursor": {
+            "type": "object",
+            "properties": {
+              "top": {
+                "type": "string",
+                "nullable": true
+              },
+              "bottom": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["top", "bottom"]
+          }
+        },
+        "required": ["code", "results", "cursor"]
+      },
+      "SocialConversation": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "description": "HTTP-style status; mirrors response status code"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/APITwitterStatus"
+              },
+              {
+                "$ref": "#/components/schemas/APIStatusTombstone"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "thread": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/APITwitterStatus"
+                },
+                {
+                  "$ref": "#/components/schemas/APIStatusTombstone"
+                }
+              ]
+            }
+          },
+          "replies": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/APITwitterStatus"
+            }
+          },
+          "author": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/APIUser"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          },
+          "cursor": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "bottom": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["bottom"]
+          }
+        },
+        "required": ["code", "status", "thread", "replies", "author", "cursor"]
+      },
+      "APISearchResultsBluesky": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/APIBlueskyStatus"
+            }
+          },
+          "cursor": {
+            "type": "object",
+            "properties": {
+              "top": {
+                "type": "string",
+                "nullable": true
+              },
+              "bottom": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["top", "bottom"]
+          }
+        },
+        "required": ["code", "results", "cursor"]
+      },
+      "APIBlueskyStatus": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["status"],
+            "description": "Discriminator: single status"
+          },
+          "id": {
+            "type": "string"
+          },
+          "cid": {
+            "type": "string"
+          },
+          "at_uri": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "created_timestamp": {
+            "type": "number"
+          },
+          "likes": {
+            "type": "number"
+          },
+          "reposts": {
+            "type": "number"
+          },
+          "quotes": {
+            "type": "number"
+          },
+          "replies": {
+            "type": "number"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "object",
+                "title": "APIBlueskyStatus (recursive)",
+                "description": "Recursive reference — same shape as `APIBlueskyStatus`."
+              },
+              {
+                "$ref": "#/components/schemas/APIStatusTombstone"
+              }
+            ]
+          },
+          "poll": {
+            "type": "object",
+            "properties": {
+              "choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "number"
+                    },
+                    "percentage": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["label", "count", "percentage"]
+                }
+              },
+              "total_votes": {
+                "type": "number"
+              },
+              "ends_at": {
+                "type": "string"
+              },
+              "time_left_en": {
+                "type": "string"
+              }
+            },
+            "required": ["choices", "total_votes", "ends_at", "time_left_en"]
+          },
+          "author": {
+            "$ref": "#/components/schemas/APIUser"
+          },
+          "media": {
+            "type": "object",
+            "properties": {
+              "external": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["video"]
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "thumbnail_url": {
+                    "type": "string"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "width": {
+                    "type": "number"
+                  }
+                },
+                "required": ["type", "url"]
+              },
+              "photos": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["photo", "gif"]
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "type": "number"
+                    },
+                    "height": {
+                      "type": "number"
+                    },
+                    "transcode_url": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "altText": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "url", "width", "height"]
+                }
+              },
+              "videos": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["video", "gif"]
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "type": "number"
+                    },
+                    "height": {
+                      "type": "number"
+                    },
+                    "thumbnail_url": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "transcode_url": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "duration": {
+                      "type": "number"
+                    },
+                    "filesize": {
+                      "type": "number"
+                    },
+                    "formats": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "container": {
+                            "type": "string",
+                            "enum": ["mp4", "webm", "m3u8"]
+                          },
+                          "codec": {
+                            "type": "string",
+                            "enum": ["h264", "hevc", "vp9", "av1"]
+                          },
+                          "bitrate": {
+                            "type": "number"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "size": {
+                            "type": "number"
+                          },
+                          "height": {
+                            "type": "number"
+                          },
+                          "width": {
+                            "type": "number"
+                          }
+                        },
+                        "required": ["url"]
+                      }
+                    },
+                    "publisher": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/APIUser"
+                        },
+                        {
+                          "nullable": true
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["type", "url", "width", "height", "duration", "formats"]
+                }
+              },
+              "all": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["photo", "gif"]
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "transcode_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "altText": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["type", "url", "width", "height"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["video", "gif"]
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "thumbnail_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "transcode_url": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "duration": {
+                          "type": "number"
+                        },
+                        "filesize": {
+                          "type": "number"
+                        },
+                        "formats": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "container": {
+                                "type": "string",
+                                "enum": ["mp4", "webm", "m3u8"]
+                              },
+                              "codec": {
+                                "type": "string",
+                                "enum": ["h264", "hevc", "vp9", "av1"]
+                              },
+                              "bitrate": {
+                                "type": "number"
+                              },
+                              "url": {
+                                "type": "string"
+                              },
+                              "size": {
+                                "type": "number"
+                              },
+                              "height": {
+                                "type": "number"
+                              },
+                              "width": {
+                                "type": "number"
+                              }
+                            },
+                            "required": ["url"]
+                          }
+                        },
+                        "publisher": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/APIUser"
+                            },
+                            {
+                              "nullable": true
+                            }
+                          ]
+                        }
+                      },
+                      "required": ["type", "url", "width", "height", "duration", "formats"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["mosaic_photo"]
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        },
+                        "formats": {
+                          "type": "object",
+                          "properties": {
+                            "webp": {
+                              "type": "string"
+                            },
+                            "jpeg": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["webp", "jpeg"]
+                        }
+                      },
+                      "required": ["type", "url", "width", "height", "formats"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "format": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": "number"
+                        },
+                        "height": {
+                          "type": "number"
+                        }
+                      },
+                      "required": ["type", "url", "width", "height"]
+                    }
+                  ]
+                }
+              },
+              "mosaic": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "format": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["mosaic_photo"]
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "formats": {
+                    "type": "object",
+                    "properties": {
+                      "webp": {
+                        "type": "string"
+                      },
+                      "jpeg": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["webp", "jpeg"]
+                  }
+                },
+                "required": ["type", "url", "width", "height", "formats"]
+              },
+              "broadcast": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": ["LIVE", "ENDED"]
+                  },
+                  "broadcaster": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "type": "string"
+                      },
+                      "display_name": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["username", "display_name", "id"]
+                  },
+                  "stream": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["url"]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": ["landscape", "portrait"]
+                  },
+                  "broadcast_id": {
+                    "type": "string"
+                  },
+                  "media_id": {
+                    "type": "string"
+                  },
+                  "media_key": {
+                    "type": "string"
+                  },
+                  "is_high_latency": {
+                    "type": "boolean"
+                  },
+                  "thumbnail": {
+                    "type": "object",
+                    "properties": {
+                      "original": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "small": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "medium": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "large": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      },
+                      "x_large": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["url"]
+                      }
+                    },
+                    "required": ["original"]
+                  }
+                },
+                "required": [
+                  "url",
+                  "width",
+                  "height",
+                  "state",
+                  "broadcaster",
+                  "title",
+                  "source",
+                  "orientation",
+                  "broadcast_id",
+                  "media_id",
+                  "media_key",
+                  "is_high_latency",
+                  "thumbnail"
+                ]
+              }
+            }
+          },
+          "raw_text": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "facets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Facet kind: e.g. url, mention, hashtag, bold, media, custom_emoji (Mastodon custom emoji image)"
+                    },
+                    "indices": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "description": "Start and end UTF-16 indices"
+                    },
+                    "original": {
+                      "type": "string"
+                    },
+                    "replacement": {
+                      "type": "string"
+                    },
+                    "display": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "indices"]
+                }
+              }
+            },
+            "required": ["text", "facets"]
+          },
+          "lang": {
+            "type": "string",
+            "nullable": true
+          },
+          "translation": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "source_lang": {
+                "type": "string"
+              },
+              "source_lang_en": {
+                "type": "string"
+              },
+              "target_lang": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              }
+            },
+            "required": ["text", "source_lang", "source_lang_en", "target_lang", "provider"]
+          },
+          "possibly_sensitive": {
+            "type": "boolean"
+          },
+          "replying_to": {
+            "$ref": "#/components/schemas/APIReplyingTo"
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "embed_card": {
+            "type": "string",
+            "enum": ["tweet", "summary", "summary_large_image", "player"]
+          },
+          "provider": {
+            "type": "string",
+            "enum": ["bluesky"]
+          },
+          "reposted_by": {
+            "$ref": "#/components/schemas/APIRepostedBy"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "url",
+          "text",
+          "created_at",
+          "created_timestamp",
+          "likes",
+          "reposts",
+          "replies",
+          "author",
+          "media",
+          "raw_text",
+          "lang",
+          "possibly_sensitive",
+          "replying_to",
+          "source",
+          "embed_card",
+          "provider"
+        ]
+      },
+      "APITrendsResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timeline_type": {
+            "type": "string"
+          },
+          "trends": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "rank": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "context": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "grouped_topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["name"]
+                  }
+                }
+              },
+              "required": ["name", "rank", "context"]
+            }
+          },
+          "cursor": {
+            "type": "object",
+            "properties": {
+              "top": {
+                "type": "string",
+                "nullable": true
+              },
+              "bottom": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["top", "bottom"]
+          }
+        },
+        "required": ["code", "timeline_type", "trends", "cursor"]
+      },
+      "UserAPIResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/APIUser"
+          },
+          "reason": {
+            "type": "string",
+            "enum": ["suspended"],
+            "description": "Set to `suspended` when the user is suspended; omitted for plain not found."
+          },
+          "id": {
+            "type": "string",
+            "description": "Numeric user id when the upstream payload includes it."
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "APIProfileRelationshipList": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/APIUser"
+            }
+          },
+          "cursor": {
+            "type": "object",
+            "properties": {
+              "top": {
+                "type": "string",
+                "nullable": true
+              },
+              "bottom": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["top", "bottom"]
+          }
+        },
+        "required": ["code", "results", "cursor"]
+      },
+      "APIGroupedSearchResultsBluesky": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelineEntryBluesky"
+            }
+          },
+          "cursor": {
+            "type": "object",
+            "properties": {
+              "top": {
+                "type": "string",
+                "nullable": true
+              },
+              "bottom": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": ["top", "bottom"]
+          }
+        },
+        "required": ["code", "results", "cursor"]
+      },
+      "TimelineEntryBluesky": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/APIBlueskyStatus"
+          },
+          {
+            "$ref": "#/components/schemas/TimelineThreadBluesky"
+          }
+        ]
+      },
+      "TimelineThreadBluesky": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["thread"],
+            "description": "Discriminator: grouped conversation snippet in a timeline (API v2)."
+          },
+          "conversation_id": {
+            "type": "string"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/APIBlueskyStatus"
+            }
+          },
+          "all_status_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "Always false for Bluesky grouped timelines (no native full-thread id list on feed rows)."
+          }
+        },
+        "required": ["type", "conversation_id", "statuses", "truncated"]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/2/status/{handle}/{rkey}": {
+      "get": {
+        "summary": "Get post",
+        "description": "Returns one Bluesky post by handle and record key (rkey), in the same envelope as FxTwitter API v2 (`code`, `status`, `thread`, `author`).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "3l6xyz"
+            },
+            "required": true,
+            "description": "Post record key from the `at://` URI",
+            "name": "rkey",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thread payload (check `code` for upstream errors mirrored as HTTP status)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bluesky upstream timeout or error (post may still exist)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/status/{handle}/{rkey}/reposts": {
+      "get": {
+        "summary": "List reposters of post",
+        "description": "Returns users who reposted the given post, in the same envelope as FxTwitter `GET /2/status/{id}/reposts` (`code`, `results`, `cursor`). Pagination uses Bluesky `app.bsky.feed.getRepostedBy`: pass the prior `cursor.bottom` as the `cursor` query param. `handle` may be a handle or DID (`did:plc:…`). `cursor.top` is always null.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "3l6xyz"
+            },
+            "required": true,
+            "description": "Post record key from the `at://` URI",
+            "name": "rkey",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User list page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIUserListResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found or list unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIUserListResults"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIUserListResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/status/{handle}/{rkey}/likes": {
+      "get": {
+        "summary": "List likers of post",
+        "description": "Returns users who liked the given post, in the same envelope as FxTwitter-style user list results (`code`, `results`, `cursor`). Pagination uses Bluesky `app.bsky.feed.getLikes`: pass the prior `cursor.bottom` as the `cursor` query param. `handle` may be a handle or DID (`did:plc:…`). `cursor.top` is always null.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "3l6xyz"
+            },
+            "required": true,
+            "description": "Post record key from the `at://` URI",
+            "name": "rkey",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User list page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIUserListResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found or list unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIUserListResults"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIUserListResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/thread/{handle}/{rkey}": {
+      "get": {
+        "summary": "Get unrolled thread",
+        "description": "Returns the post chain for a Bluesky thread, matching the shape of FxTwitter `GET /2/thread/{id}`.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "3l6xyz"
+            },
+            "required": true,
+            "description": "Post record key",
+            "name": "rkey",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thread payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bluesky upstream timeout or error (post may still exist)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialThread"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/conversation/{handle}/{rkey}": {
+      "get": {
+        "summary": "Get unrolled thread and replies",
+        "description": "Returns the focal post, ancestor chain and author self-thread (same as `/2/thread/{handle}/{rkey}` on the first page), plus **direct** replies from other participants. Replies are sorted by `ranking_mode` (default likes). Pagination uses an opaque `cursor` query param (`cursor.bottom` from the prior response); Bluesky `getPostThread` has no native reply cursor, so each page refetches the thread slice. Optional `count` (1–100, default 20) sets the reply page size. Very large reply lists still require a large upstream payload when loading direct replies.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "3l6xyz"
+            },
+            "required": true,
+            "description": "Post record key",
+            "name": "rkey",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["likes", "recency"],
+              "default": "likes"
+            },
+            "required": false,
+            "description": "How direct replies are ranked (default: likes). Ignored when `cursor` is set; the cursor carries the mode used for the session.",
+            "name": "ranking_mode",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Opaque pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Reply page size for the first request (default 20). Subsequent pages use the size embedded in `cursor`.",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation payload with thread, replies, and pagination cursor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialConversation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path, query parameters, or cursor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialConversation"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialConversation"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bluesky upstream timeout or error (post may still exist)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialConversation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/search": {
+      "get": {
+        "summary": "Search posts by query",
+        "description": "Search posts via Bluesky `app.bsky.feed.searchPosts`. Response shape matches FxTwitter `GET /2/search` (`code`, `results`, `cursor`). `cursor.top` is always null; pass `cursor.bottom` as the `cursor` query param. `feed=latest` and `feed=top` map to Bluesky `sort`. `feed=media` uses `sort=latest` then keeps posts with image, video, or external link embeds (may return fewer hits than `count`). `lang` is used for inline translation only, not the upstream post-language filter.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "puppies"
+            },
+            "required": true,
+            "description": "Search query (non-empty)",
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["latest", "top", "media"],
+              "default": "latest"
+            },
+            "required": false,
+            "description": "Search tab (default latest). `media` is a client-side filter on the current result page (no native Bluesky media tab).",
+            "name": "feed",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            },
+            "required": false,
+            "description": "Page size (default 30)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid `q` parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No results or search unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/trends": {
+      "get": {
+        "summary": "Trending topics (Bluesky)",
+        "description": "Returns trending topic labels and suggested topic feeds from the Bluesky public AppView, in the same envelope as FxTwitter `GET /2/trends` (`code`, `timeline_type`, `trends`, `cursor`). Each trend’s `context` includes a bsky.app URL to the topic feed when the upstream provides a `link`.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": ["trending", "suggested"],
+              "default": "trending",
+              "example": "trending"
+            },
+            "required": false,
+            "description": "Trend list. `trending` returns Bluesky live topics first, then suggested topic feeds to fill `count`. `suggested` returns only suggested feeds. Upstream: `app.bsky.unspecced.getTrendingTopics` (max 25 rows per request).",
+            "name": "type",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            },
+            "required": false,
+            "description": "Number of trends (default 20, max 50)",
+            "name": "count",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trends payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APITrendsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters (e.g. `type` or `count` out of allowed range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Trends unavailable or empty upstream list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APITrendsResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APITrendsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/profile/{handle}": {
+      "get": {
+        "summary": "Get profile",
+        "description": "Returns profile fields in the same envelope as FxTwitter `GET /2/profile/{handle}` (`code`, `message`, `user`). `handle` may be a handle (e.g. `user.bsky.social`) or a DID (`did:plc:…`).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile (check `code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAPIResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAPIResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server or upstream failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAPIResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/profile/{handle}/followers": {
+      "get": {
+        "summary": "List followers of user",
+        "description": "Returns a page in the same shape as FxTwitter `GET /2/profile/{handle}/followers` (`code`, `results`, `cursor`). `handle` may be a handle or DID. Pagination uses Bluesky `app.bsky.graph.getFollowers`: pass the prior `cursor.bottom` as the `cursor` query param. `cursor.top` is always null.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followers page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIProfileRelationshipList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters (e.g. `count` out of range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Actor not found or list unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIProfileRelationshipList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIProfileRelationshipList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/profile/{handle}/following": {
+      "get": {
+        "summary": "List following of user",
+        "description": "Returns a page in the same shape as FxTwitter `GET /2/profile/{handle}/following` (`code`, `results`, `cursor`). `handle` may be a handle or DID. Pagination uses Bluesky `app.bsky.graph.getFollows`: pass the prior `cursor.bottom` as the `cursor` query param. `cursor.top` is always null.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Following page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIProfileRelationshipList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters (e.g. `count` out of range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Actor not found or list unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIProfileRelationshipList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIProfileRelationshipList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/profile/{handle}/media": {
+      "get": {
+        "summary": "List posts with media for an actor",
+        "description": "Returns a timeline page in the same shape as FxTwitter `GET /2/profile/{handle}/media` (`code`, `results`, `cursor`). `handle` may be a handle or DID. Pagination uses Bluesky `app.bsky.feed.getAuthorFeed` with `filter=posts_with_media`: `cursor.bottom` is the opaque next-page token (pass as `cursor` query param). `cursor.top` is always null.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Media timeline page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters (e.g. `count` out of range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Actor not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/profile/{handle}/likes": {
+      "get": {
+        "summary": "List posts liked by an actor",
+        "description": "Returns a timeline page in the same shape as other FxBluesky profile timelines (`code`, `results`, `cursor`). `handle` may be a handle or DID. Pagination uses Bluesky `app.bsky.feed.getActorLikes`: pass the prior `cursor.bottom` as the `cursor` query param. `cursor.top` is always null. **Note:** Bluesky’s lexicon states this method requires authentication and that `actor` must be the requesting account; the public AppView may return **401** or errors for unauthenticated or cross-actor access—callers should handle `code` 401 accordingly.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Likes timeline page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameters (e.g. `count` out of range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Upstream rejected the request (e.g. unauthenticated access to likes)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Actor not found or list unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/profile/{handle}/statuses": {
+      "get": {
+        "summary": "List user statuses",
+        "description": "Returns a timeline page in the same shape as FxTwitter `GET /2/profile/{handle}/statuses` (`code`, `results`, `cursor`). `handle` may be a handle or DID. Pagination uses Bluesky `app.bsky.feed.getAuthorFeed`: `cursor.bottom` is the opaque next-page token (pass as `cursor` query param). `cursor.top` is always null—there is no reverse cursor on this upstream endpoint. Optional `since` (Unix time): when used without `cursor`, returns **204 No Content** if no posts are strictly newer than that instant. Values ≥ 1e12 are treated as milliseconds.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "bsky.app"
+            },
+            "required": true,
+            "description": "Bluesky handle (e.g. `user.bsky.social`) or DID (`did:plc:…`)",
+            "name": "handle",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "description": "Page size (default 20)",
+            "name": "count",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Pagination cursor from prior response (`cursor.bottom`)",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "nullable": true,
+              "minimum": 0
+            },
+            "required": false,
+            "description": "Unix timestamp (seconds, or ms if ≥ 1e12). Without `cursor`, 204 if no post is strictly newer than this time.",
+            "name": "since",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "If truthy (`1`, `true`, `yes`, `on`, or empty), include replies (`posts_with_replies` upstream); otherwise `posts_no_replies`.",
+            "name": "with_replies",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "If truthy, return `results` as a mix of `type: \"status\"` and `type: \"thread\"` entries (consecutive self-reply chains grouped).",
+            "name": "groupthreads",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "es"
+            },
+            "required": false,
+            "description": "Target language (ISO 639-1 or BCP 47) for inline translation when available",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Timeline page (flat or grouped when `groupthreads` is set)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/APISearchResultsBluesky"
+                    },
+                    {
+                      "$ref": "#/components/schemas/APIGroupedSearchResultsBluesky"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No posts newer than `since` (only when `since` is set and `cursor` is omitted; same conditions as 200 otherwise)"
+          },
+          "400": {
+            "description": "Invalid path or query parameters (e.g. `count` out of range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiQueryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Actor not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upstream or processing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APISearchResultsBluesky"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

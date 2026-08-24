@@ -1,0 +1,23 @@
+.DS*
+core/
+
+.idea
+.vscode
+*.pyc
+dumpObj.py
+url.txt
+
+# pypi
+venv/
+dist/
+build/
+PixivPy.egg-info/
+MANIFEST
+
+example/
+demo_debug.py
+
+setup.cfg
+PixivPy_Async.egg-info/
+
+abc*

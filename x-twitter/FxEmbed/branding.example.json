@@ -1,0 +1,87 @@
+{
+  "zones": [
+    {
+      "name": "FxTwitter",
+      "default": true,
+      "domains": ["fxtwitter.com", "twittpr.com"],
+      "provider": "twitter",
+      "favicon": "https://abs.twimg.com/favicons/twitter.2.ico",
+      "redirect": "https://github.com/FxEmbed/FxEmbed",
+      "color": "#6363ff",
+      "activityIcons": {
+        "default": "https://assets.fxembed.com/logos/fxtwitter32.png",
+        "svg": "https://assets.fxembed.com/logos/fxtwitter.svg",
+        "16": "https://assets.fxembed.com/logos/fxtwitter16.png",
+        "24": "https://assets.fxembed.com/logos/fxtwitter24.png",
+        "32": "https://assets.fxembed.com/logos/fxtwitter32.png",
+        "48": "https://assets.fxembed.com/logos/fxtwitter48.png",
+        "64": "https://assets.fxembed.com/logos/fxtwitter64.png"
+      }
+    },
+    {
+      "name": "FixupX",
+      "domains": ["fixupx.com", "xfixup.com"],
+      "provider": "twitter",
+      "favicon": "https://abs.twimg.com/favicons/twitter.3.ico",
+      "redirect": "https://github.com/FxEmbed/FxEmbed",
+      "color": "#6363ff",
+      "activityIcons": {
+        "default": "https://assets.fxembed.com/logos/fixupx32.png",
+        "svg": "https://assets.fxembed.com/logos/fixupx.svg",
+        "16": "https://assets.fxembed.com/logos/fixupx16.png",
+        "24": "https://assets.fxembed.com/logos/fixupx24.png",
+        "32": "https://assets.fxembed.com/logos/fixupx32.png",
+        "48": "https://assets.fxembed.com/logos/fixupx48.png",
+        "64": "https://assets.fxembed.com/logos/fixupx64.png"
+      }
+    },
+    {
+      "name": "FxBluesky",
+      "domains": ["fxbsky.app"],
+      "provider": "bluesky",
+      "redirect": "https://bsky.app/profile/fxbsky.app",
+      "color": "#6363ff",
+      "activityIcons": {
+        "default": "https://assets.fxembed.com/logos/fxbluesky32.png",
+        "svg": "https://assets.fxembed.com/logos/fxbluesky.svg",
+        "16": "https://assets.fxembed.com/logos/fxbluesky16.png",
+        "24": "https://assets.fxembed.com/logos/fxbluesky24.png",
+        "32": "https://assets.fxembed.com/logos/fxbluesky32.png",
+        "48": "https://assets.fxembed.com/logos/fxbluesky48.png",
+        "64": "https://assets.fxembed.com/logos/fxbluesky64.png"
+      }
+    },
+    {
+      "name": "FixTok",
+      "domains": ["fixtok.wuff.gay", "dxtiktok.com", "wuff.gay", "cocktiktok.com"],
+      "provider": "tiktok",
+      "redirect": "https://tiktok.com",
+      "color": "#6363ff",
+      "activityIcons": {
+        "default": "https://fxembed-assets.pages.dev/logos/fixtok32.png",
+        "svg": "https://fxembed-assets.pages.dev/logos/fixtok.svg",
+        "16": "https://fxembed-assets.pages.dev/logos/fixtok16.png",
+        "24": "https://fxembed-assets.pages.dev/logos/fixtok24.png",
+        "32": "https://fxembed-assets.pages.dev/logos/fixtok32.png",
+        "48": "https://fxembed-assets.pages.dev/logos/fixtok48.png",
+        "64": "https://fxembed-assets.pages.dev/logos/fixtok64.png"
+      }
+    },
+    {
+      "name": "FxInstagram",
+      "domains": ["67instagram.com"],
+      "provider": "instagram",
+      "redirect": "https://www.instagram.com",
+      "color": "#6363ff",
+      "activityIcons": {
+        "default": "https://fxembed-assets.pages.dev/logos/fxinstagram32.png",
+        "svg": "https://fxembed-assets.pages.dev/logos/fxinstagram.svg",
+        "16": "https://fxembed-assets.pages.dev/logos/fxinstagram16.png",
+        "24": "https://fxembed-assets.pages.dev/logos/fxinstagram24.png",
+        "32": "https://fxembed-assets.pages.dev/logos/fxinstagram32.png",
+        "48": "https://fxembed-assets.pages.dev/logos/fxinstagram48.png",
+        "64": "https://fxembed-assets.pages.dev/logos/fxinstagram64.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+[project]
+name = "parsehub"
+version = "2.2.0"
+description = "轻量、异步、开箱即用的社交媒体聚合解析库"
+readme = "README.md"
+requires-python = ">=3.12.0"
+authors = [
+    { name = "梓澪", email = "zilingmio@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = ["parser", "video-downloader", "social-media", "crawler", "parsehub"]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "aiofiles>=23.2",
+    "beautifulsoup4>=4.12.3",
+    "loguru>=0.6.0",
+    "pydub>=0.25.1",
+    "python-dotenv>=1.0.1",
+    "tenacity>=8.5.0",
+    "urlextract>=1.9.0",
+    "yt-dlp[default]>=2026.8.18.122307.dev0",
+    "lxml>=5.3.0",
+    "pydantic>=1.10.19",
+    "markdownify>=1.1.0",
+    "markdown>=3.7",
+    "requests",
+    "httpx>=0.24.1",
+    "pillow>=12.1.0",
+    "python-slugify[unidecode]>=8.0.4",
+    "opencv-python-headless>=4.13.0.92",
+    "cryptography>=49.0.0",
+    "gmssl>=3.2.2",
+    "signerpy>=0.12.0",
+]
+
+[project.scripts]
+parsehub = "parsehub.cli:main"
+ph = "parsehub.cli:main"
+
+[project.optional-dependencies]
+cli = [
+    "argcomplete>=3.6.3",
+    "platformdirs>=4.5.1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.1.0",
+    "pytest>=9.0.3",
+    "ruff>=0.14.14",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/parsehub"]
+
+[project.urls]
+Repository = "https://github.com/z-mio/parsehub"
+Issues = "https://github.com/z-mio/parsehub/issues"
+
+[tool.ruff]
+line-length = 120
+exclude = ["test/_*.py"]
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle 错误检查
+    "W", # pycodestyle 警告检查
+    "F", # pyflakes 错误检查
+    "I", # isort 导入排序
+    "B", # flake8-bugbear 常见错误检查
+    "C4", # flake8-comprehensions 列表/字典推导式检查
+    "UP", # pyupgrade 自动升级语法
+]
+ignore = [
+    "B008", # 不在参数默认值中执行函数调用
+    "C901", # 函数复杂度过高
+]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["./"]
+exclude = ["test"]
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_ignores = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+
+[tool.pytest.ini_options]
+testpaths =  ["test"]
+pythonpath = ["src"]
+python_files = ["test_*.py"]

@@ -1,0 +1,36 @@
+---
+title: Compare Features
+description: Compare FxEmbed features with other alternatives.
+---
+
+## Comparison with Alternatives
+
+|                                        |         FxTwitter / FixupX         | Default |       vxTwitter (fixvx)        |
+| -------------------------------------- | :--------------------------------: | :-----: | :----------------------------: |
+| Embed Posts / Image                    |                 ✅                 |   ✅    |               ✅               |
+| Embed profile pictures on posts        |                 ✅                 |   ❌    |         ☑️ If no media         |
+| Embed Videos                           |                 ✅                 |   ❌    |               ✅               |
+| Embed External Videos (YouTube, etc.)  |                ✅¹                 |   ❌    |               ❌               |
+| Embed Poll results                     |                 ✅                 |   ❌    |               ✅               |
+| Embed Quotes                           |                 ✅                 |   ❌    |        ☑️ Without Media        |
+| Embed Multiple Images                  |                 ✅                 |   ❌    |               ✅               |
+| Native Multi-Image (Discord)           |                 ✅                 |   ❌    |               ❌               |
+| Translate Posts                        |                 ✅                 |   ❌    |               ❌               |
+| Replace t.co with original links       |                 ✅                 |   ❌    |    ☑️ Not Linked on Discord    |
+| Redirect to media file (without embed) |                 ✅                 |   ❌    | ☑️ Subdomain broken, no images |
+| Gallery view                           |                 ✅                 |   ❌    |               ❌               |
+| Strip tracking info on redirect        |                 ✅                 |   ❌    |               ✅               |
+| Show date / time of post               | ☑️ Discord / Telegram Instant View |   ❌    |               ❌               |
+| Show retweet, like, reply, view counts | ☑️ Discord / Telegram Instant View |   ❌    |       ➖ Not on Discord        |
+| Discord sed replace (`s/`) friendly    |  ☑️ twittpr.com with twitter.com   |   N/A   |               ❌               |
+| Telegram Instant View                  |                 ✅                 |   ❌    |               ❌               |
+| Basic fetch API                        |   ✅ Comprehensive Developer API   |   N/A   |       ☑️ Basic Fetch API       |
+| RSS & Atom feeds                       |                 ✅                 |   N/A   |               ❌               |
+| Last commit                            |           [![][flc]][fc]           |   N/A   |         [![][vlc]][vc]         |
+
+[flc]: https://img.shields.io/github/last-commit/FxEmbed/FxEmbed?label
+[vlc]: https://img.shields.io/github/last-commit/dylanpdx/BetterTwitFix?label
+[fc]: https://github.com/FxEmbed/FxEmbed/commits
+[vc]: https://github.com/dylanpdx/BetterTwitFix/commits
+
+¹ External media requiring web containers, such as YouTube, won't embed in Telegram because Telegram doesn't support it. Plain media will work in Telegram, and it works either way inside Discord.

@@ -1,0 +1,21 @@
+---
+title: URL Modifiers
+description: Subdomain flags and URL suffixes that change how FxEmbed renders your links.
+---
+
+FxEmbed supports a number of subdomain prefixes and URL suffixes to control embed behavior. These work across all supported domains (`fxtwitter.com`, `fixupx.com`, `fxbsky.app`).
+
+| Modifier                                           | Syntax                               | Effect                      |
+| -------------------------------------------------- | ------------------------------------ | --------------------------- |
+| [Direct media](/guide/url-modifiers/direct-media/) | `d.` prefix, or `.mp4`/`.jpg` suffix | Link directly to media file |
+| [Select photo](/guide/url-modifiers/select-photo/) | `/photo/{n}` suffix                  | Pick specific image         |
+| [Translate](/guide/url-modifiers/translate/)       | `/{lang}` suffix                     | Translate post text         |
+| [Mosaic](/guide/url-modifiers/mosaic/)             | `m.` prefix                          | Combine images into one     |
+| [Gallery](/guide/url-modifiers/gallery/)           | `g.` prefix                          | Media + author only         |
+| [Text-only](/guide/url-modifiers/text-only/)       | `t.` prefix                          | Text only, no media         |
+| [Instant View](/guide/url-modifiers/instant-view/) | `i.` prefix                          | Telegram Instant View       |
+| [Old embeds](/guide/url-modifiers/old-embeds/)     | `o.` prefix                          | Legacy Discord embed style  |
+
+## Subdomain flags
+
+Prepend these subdomains to change the embed style. Each modifier above has its own page with examples and screenshots.

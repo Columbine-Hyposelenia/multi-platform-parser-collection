@@ -1,0 +1,117 @@
+{
+  "name": "@fxembed/atmosphere",
+  "version": "0.0.1",
+  "description": "Shared provider protocols and unified envelope types for FxEmbed (Bluesky, Twitter, Mastodon, etc.)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.js"
+    },
+    "./types/api-schemas": {
+      "types": "./dist/types/api-schemas.d.ts",
+      "import": "./dist/types/api-schemas.js"
+    },
+    "./types/api-status": {
+      "types": "./dist/types/api-status.d.ts",
+      "import": "./dist/types/api-status.js"
+    },
+    "./types/data-provider": {
+      "types": "./dist/types/data-provider.d.ts",
+      "import": "./dist/types/data-provider.js"
+    },
+    "./helpers": {
+      "types": "./dist/helpers/index.d.ts",
+      "import": "./dist/helpers/index.js"
+    },
+    "./helpers/*": {
+      "types": "./dist/helpers/*.d.ts",
+      "import": "./dist/helpers/*.js"
+    },
+    "./providers/bluesky-runtime": {
+      "types": "./dist/providers/bluesky-runtime.d.ts",
+      "import": "./dist/providers/bluesky-runtime.js"
+    },
+    "./transports": {
+      "types": "./dist/transports/index.d.ts",
+      "import": "./dist/transports/index.js"
+    },
+    "./providers/*": {
+      "types": "./dist/providers/*.d.ts",
+      "import": "./dist/providers/*.js"
+    },
+    "./providers/bluesky/*": {
+      "types": "./dist/providers/bluesky/*.d.ts",
+      "import": "./dist/providers/bluesky/*.js"
+    },
+    "./providers/bluesky/auth": {
+      "types": "./dist/providers/bluesky/auth/index.d.ts",
+      "import": "./dist/providers/bluesky/auth/index.js"
+    },
+    "./providers/bluesky/auth/*": {
+      "types": "./dist/providers/bluesky/auth/*.d.ts",
+      "import": "./dist/providers/bluesky/auth/*.js"
+    },
+    "./providers/tiktok/*": {
+      "types": "./dist/providers/tiktok/*.d.ts",
+      "import": "./dist/providers/tiktok/*.js"
+    },
+    "./providers/mastodon-runtime": {
+      "types": "./dist/providers/mastodon-runtime.d.ts",
+      "import": "./dist/providers/mastodon-runtime.js"
+    },
+    "./providers/mastodon/*": {
+      "types": "./dist/providers/mastodon/*.d.ts",
+      "import": "./dist/providers/mastodon/*.js"
+    },
+    "./providers/instagram/*": {
+      "types": "./dist/providers/instagram/*.d.ts",
+      "import": "./dist/providers/instagram/*.js"
+    },
+    "./providers/threads/*": {
+      "types": "./dist/providers/threads/*.d.ts",
+      "import": "./dist/providers/threads/*.js"
+    },
+    "./providers/twitter-runtime": {
+      "types": "./dist/providers/twitter-runtime.d.ts",
+      "import": "./dist/providers/twitter-runtime.js"
+    },
+    "./providers/twitter/*": {
+      "types": "./dist/providers/twitter/*.d.ts",
+      "import": "./dist/providers/twitter/*.js"
+    },
+    "./types/proxy-credentials": {
+      "types": "./dist/types/proxy-credentials.d.ts",
+      "import": "./dist/types/proxy-credentials.js"
+    },
+    "./relay": {
+      "types": "./dist/relay/index.d.ts",
+      "import": "./dist/relay/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint:eslint": "eslint --max-warnings=0 src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "@hono/zod-openapi": "^1.6.0",
+    "zod": "^4.4.3"
+  }
+}

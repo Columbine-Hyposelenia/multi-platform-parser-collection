@@ -1,0 +1,51 @@
+---
+title: Mosaic
+description: Run the mosaic multi-image service with Docker and wire it to FxEmbed.
+---
+
+[Mosaic](https://github.com/FxEmbed/mosaic) is FxEmbed's service to combine multiple images into a single composite image.
+
+## Running mosaic in Docker (easiest)
+
+This will run mosaic on port 3030.
+
+```bash
+docker run -d --name mosaic -p 3030:3030 ghcr.io/fxembed/mosaic:latest
+```
+
+## Building mosaic from source
+
+You need to have the Rust toolchain installed.
+
+```bash
+# Clone and build
+git clone https://github.com/FxEmbed/mosaic.git
+cd mosaic
+cargo build --release
+
+# Run the binary
+./target/release/mosaic
+```
+
+## URL format
+
+Mosaic URLs are formatted as follows:
+
+```
+https://mosaic.fxtwitter.com/jpeg/:tweet_id/:image_id1/:image_id2/:image_id3?/:image_id4?
+https://mosaic.fxbsky.app/jpeg/:post_id/:image_id1/:image_id2/:image_id3?/:image_id4?
+```
+
+You can specify between 2 and 4 image IDs. The image IDs for Twitter correspond to the filename of the image on the pbs.twimg.com url. On Bluesky, it's the full DID of the image.
+
+## Configure FxEmbed
+
+Set these in `.env` (and mirror them in Wrangler / GitHub Actions if you deploy that way, see [Configuration](/deployment/configuration/)):
+
+| Variable                  | Role                                                                                                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MOSAIC_DOMAIN_LIST`      | Hostname(s) of your Mosaic service for **X/Twitter and Mastodon** embeds. Comma-separated if you run more than one; FxEmbed picks one per post for simple load balancing. Use hostnames only (no `https://`). |
+| `MOSAIC_BSKY_DOMAIN_LIST` | Same for **Bluesky** embeds (can be the same host or a separate one).                                                                                                                                         |
+| `FORCE_MOSAIC_DOMAINS`    | Optional. If you use `m.` subdomains to force mosaic-style embeds, list those hostnames here so routing matches your branding domains.                                                                        |
+
+If you run a single Mosaic instance, set one hostname in each list you need (Twitter/Mastodon vs. Bluesky). Use comma-separated hostnames when you run several Mosaic endpoints and want FxEmbed to spread load across them. Full variable descriptions are in [Configuration](/deployment/configuration/).

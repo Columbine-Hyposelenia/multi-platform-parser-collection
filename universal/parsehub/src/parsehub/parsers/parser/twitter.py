@@ -1,0 +1,79 @@
+from typing import Any
+from urllib.parse import urlparse, urlunparse
+
+from ...provider_api.twitter import (
+    Twitter,
+    TwitterAni,
+    TwitterPhoto,
+    TwitterTweet,
+    TwitterVideo,
+)
+from ...types import (
+    AniRef,
+    AnyMediaRef,
+    ImageRef,
+    MultimediaParseResult,
+    ParseError,
+    Platform,
+    RichTextParseResult,
+    VideoRef,
+)
+from ..base.base import BaseParser
+
+
+class TwitterParser(BaseParser):
+    __platform__ = Platform.TWITTER
+    __supported_type__ = ["视频", "图文"]
+    __match__ = r"^(http(s)?://)?.+(twitter|fixupx|x).com/.*/status/\d+"
+
+    async def _do_parse(self, raw_url: str) -> MultimediaParseResult | RichTextParseResult:
+        tweet = await self._parse(raw_url)
+        return await self.media_parse(tweet)
+
+    async def get_raw_url(self, url: str, **kwargs: Any) -> str:
+        url = await super().get_raw_url(url, **kwargs)
+        return str(urlunparse(urlparse(url)._replace(netloc="x.com")))
+
+    async def _parse(self, url: str) -> TwitterTweet:
+        x = Twitter(self.proxy, cookie=None)
+        try:
+            tweet = await x.fetch_tweet(url)
+        except Exception as e:
+            if any(s in str(e) for s in ("error -2", "error -3")):
+                if cookie := self.cookie.get_value():
+                    x2 = Twitter(self.proxy, cookie=cookie)
+                    try:
+                        tweet = await x2.fetch_tweet(url)
+                    except Exception as e2:
+                        raise ParseError(f"Twitter 账号无权限或已被封禁\n\n使用的 Cookie: {self.cookie}") from e2
+                else:
+                    raise ParseError(str(e)) from e
+            else:
+                raise ParseError(str(e)) from e
+        return tweet
+
+    @staticmethod
+    async def media_parse(tweet: TwitterTweet) -> MultimediaParseResult | RichTextParseResult:
+        media: list[AnyMediaRef] = []
+        if tweet.media:
+            for m in tweet.media:
+                match m:
+                    case TwitterPhoto():
+                        path: AnyMediaRef = ImageRef(url=m.url, height=m.height, width=m.width, thumb_url=m.thumb_url)
+                    case TwitterVideo():
+                        path = VideoRef(
+                            url=m.url,
+                            height=m.height,
+                            width=m.width,
+                            duration=int(m.duration_millis / 1000),
+                            thumb_url=m.thumb_url,
+                        )
+                    case TwitterAni():
+                        path = AniRef(url=m.url, ext="mp4", height=m.height, width=m.width, thumb_url=m.thumb_url)
+                media.append(path)
+        if article := tweet.article:
+            return RichTextParseResult(markdown_content=article.content, title=article.title, media=media)
+        return MultimediaParseResult(content=tweet.full_text, media=media)
+
+
+__all__ = ["TwitterParser"]

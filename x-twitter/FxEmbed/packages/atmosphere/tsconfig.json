@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "module": "NodeNext",
+    "target": "ES2024",
+    "lib": ["ES2024", "DOM"],
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "alwaysStrict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmitOnError": true
+  },
+  "include": ["src/**/*.ts", "src/raw/vendor/*.d.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

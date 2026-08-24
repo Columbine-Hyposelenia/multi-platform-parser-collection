@@ -1,0 +1,16 @@
+name = "fixtweet"
+account_id = "[CLOUDFLARE_ACCOUNT_ID]"
+main = "./dist/worker.js"
+compatibility_date = "2026-04-11"
+send_metrics = false
+
+# Remove this if not using Cloudflare Analytics Engine
+analytics_engine_datasets = [
+  { binding = "AnalyticsEngine" }
+]
+
+# Use .env to configure environment variables, not wrangler.toml
+# except CREDENTIAL_KEY and EXCEPTION_DISCORD_WEBHOOK, which should be set using `wrangler secret put CREDENTIAL_KEY`
+
+[build]
+command = "npm run build"

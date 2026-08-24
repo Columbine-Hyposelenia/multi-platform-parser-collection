@@ -1,0 +1,70 @@
+---
+title: FAQ
+description: Frequently asked questions about FxEmbed, FxTwitter, FixupX, and FxBluesky.
+---
+
+## What's the difference between `fxtwitter.com`, `fixupx.com` and `twittpr.com`?
+
+They all run the exact same worker and function identically.
+
+- **`fxtwitter.com`** is the primary domain for `twitter.com` links
+- **`fixupx.com`** makes it easy to fix `x.com` links (short `.com` domains are expensive)
+- **`twittpr.com`** was designed for Discord's sed-style replacement — send a `twitter.com` link, then type `s/e/p` to automatically edit it
+
+## How come embedding takes so long or doesn't work in Telegram?
+
+Telegram's embedding servers sometimes never send a request to embed a URL, often due to their servers being overloaded. Try using [Webpage Bot](https://t.me/WebpageBot) to clear the cached embed.
+
+Be sure to replace the URL _before_ sending your message, as embeds usually don't update after you've already sent it.
+
+## What if I don't want to display all images in a post?
+
+You can pick a specific photo or video from a post using X/Twitter's own URL syntax. Append `/photo/N` or `/video/N` where N is the image or video number (starting from 1):
+
+```
+https://fxtwitter.com/user/status/123456789/photo/3
+https://fxtwitter.com/user/status/123456789/video/2
+```
+
+## Is FxEmbed associated with [some other website that starts with fx]?
+
+No. FxEmbed only operates on these domains:
+
+- `fxtwitter.com` / `twittpr.com`
+- `fixupx.com` (also `xfixup.com`)
+- `fxbsky.app`
+
+## How does FxEmbed handle privacy?
+
+We believe privacy is a fundamental human right and avoid collecting data that is unnecessary.
+
+The TL;DR is that we only log errors and non-identifying information - we don't share or sell any data or make it available to third parties.
+
+We collect:
+
+- Runtime errors: We will collect URLs and basic headers for errors that break embeds
+- Account errors (X/Twitter): We collect only basic request information (post ID) to diagnose issues within our account proxy
+- Basic analytics: We use Cloudflare Analytics Engine to collect basic, anonymous statistics that cannot identify individual users or posts. (i.e. bot user agent popularity, whether a request succeeded or not, etc.)
+
+We do not collect:
+
+- Who posts a link
+- Who clicks on a link
+- Any data that could identify a user or post (unless there's an error, see above)
+
+We also strip tracking parameters (like `?s` and `&t`) from X/Twitter URLs to prevent them from being used for telemetry and advertising.
+
+## Can I self-host FxEmbed?
+
+Yes! See the [self-hosting guide](/deployment/) for setup instructions.
+
+## What platforms does FxEmbed support as embed sources?
+
+Currently:
+
+- **X/Twitter** — via `fxtwitter.com`, `fixupx.com`, `twittpr.com`
+- **Bluesky** — via `fxbsky.app`
+
+## How do I contribute?
+
+FxEmbed is open source on [GitHub](https://github.com/FxEmbed/FxEmbed). Pull requests are welcome! You can also help with [localization via Crowdin](https://crowdin.com/project/fxtwitter).

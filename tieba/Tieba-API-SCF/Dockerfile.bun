@@ -1,0 +1,28 @@
+# syntax=docker/dockerfile:1.7
+
+FROM oven/bun:1.3.9-alpine AS build
+WORKDIR /app
+
+# Build from repository root:
+# docker build -f apps/api/Dockerfile.bun .
+COPY package.json bun.lock bunfig.toml tsconfig.base.json turbo.json ./
+COPY apps/api/package.json apps/api/tsconfig.json apps/api/tsconfig.base.json ./apps/api/
+COPY packages/sdk/package.json packages/sdk/tsconfig*.json packages/sdk/bunfig.toml ./packages/sdk/
+
+RUN bun install --frozen-lockfile
+
+COPY apps/api/src ./apps/api/src
+COPY packages/sdk/src ./packages/sdk/src
+
+RUN bun run --cwd apps/api build
+
+FROM oven/bun:1.3.9-alpine AS runtime
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=build /app/apps/api/out /app/out
+
+EXPOSE 8000
+
+CMD ["bun", "/app/out/index.js"]

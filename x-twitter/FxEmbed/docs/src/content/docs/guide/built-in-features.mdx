@@ -1,0 +1,38 @@
+---
+title: Built-In Features
+description: Translation, Telegram Instant View, Nitter redirect, and other advanced FxEmbed features.
+---
+
+## Videos and GIFs
+
+Videos and GIFs embed and play inline in Discord, Telegram, and other clients. You can even ⭐️ favorite GIFs in Discord to use later!
+
+## Link Shortener Replacement
+
+FxEmbed automatically replaces `t.co` shortened links in X/Twitter posts with their original destination URLs. This makes it clear where links point before clicking them.
+
+## Polls (X/Twitter)
+
+Polls are embedded and displayed with the full results, including each option's label, vote count, and percentage. We even support ongoing polls, although platforms typically cache the contents of embeds for a while.
+
+## Telegram Instant View
+
+When sharing FxEmbed links in Telegram, threads are rendered using Telegram's Instant View, allowing you to read entire conversation threads without leaving the app or opening a browser.
+
+Instant View will:
+
+- Unroll the full thread from any linked post
+- Track replied-to posts back to the start of the conversation
+- Display media, quotes, and other rich content inline
+
+Normally, we will automatically enable Instant View when appropriate. You can also use the `i.` subdomain to explicitly request Instant View rendering:
+
+```
+https://i.fxtwitter.com/user/status/123456789
+https://i.fixupx.com/user/status/123456789
+https://i.fxbsky.app/profile/user.bsky.social/post/abc123
+```
+
+## Tracking Parameter Removal
+
+When FxEmbed redirects to the original post, it strips tracking parameters (like `?s` and `&t` on X/Twitter URLs) that are only used for telemetry and advertising.

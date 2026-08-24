@@ -1,0 +1,24 @@
+/* Keep overrides inside Starlight’s cascade layers. Unlayered rules here would win over @layer starlight.base and break light theme (see Page.astro import order). */
+@layer starlight.utils {
+  :root {
+    --sl-color-accent-low: #1a1a4e;
+    --sl-color-accent: #6363ff;
+    --sl-color-accent-high: #b8b8ff;
+  }
+
+  :root[data-theme='light'] {
+    --sl-color-accent-low: #d8d8ff;
+    --sl-color-accent: #4b4bdb;
+    --sl-color-accent-high: #1e1e6e;
+  }
+
+  /*
+   * starlight-openapi always renders a media-type <select> (v0.24 uses label.not-content inside
+   * <starlight-openapi-content-picker>). Hide when there is only one MIME type. !important beats
+   * Astro’s unlayered scoped `label { display: flex }` on that control.
+   */
+  starlight-openapi-content-picker > label:has(select option:only-child),
+  .sl-openapi-section .panel > label.not-content:has(select option:only-child) {
+    display: none !important;
+  }
+}

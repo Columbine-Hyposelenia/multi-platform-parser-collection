@@ -1,0 +1,11 @@
+dist
+node_modules
+wrangler.toml
+.env
+.DS_Store
+.wrangler
+branding.json
+credentials.json
+credentials.complete.json
+credentials.enc.json
+.credential-key
