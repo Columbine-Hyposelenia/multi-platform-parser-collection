@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"/>
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>{{ .title }}</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.0/dist/css/mdui.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.0/dist/js/mdui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <link rel="stylesheet" href="/static/css/base.css"/>
+    <link rel="stylesheet" href="/static/css/theme-original.css"/>
+    <link rel="stylesheet" href="/static/css/theme-rams.css"/>
+    <link rel="stylesheet" href="/static/css/theme-vignelli.css"/>
+    <link rel="stylesheet" href="/static/css/theme-kusama.css"/>
+    <link rel="stylesheet" href="/static/css/theme-starry.css"/>
+    <link rel="stylesheet" href="/static/css/theme-hadid.css"/>
+</head>
+<body>
+
+<!-- 主题选择器 -->
+<div class="theme-selector" id="themeSelector">
+    <div class="theme-toggle" onclick="toggleThemeSelector()">
+        <span>🎨 主题</span>
+        <span id="toggleIcon">▼</span>
+    </div>
+    <div class="theme-options">
+        <div class="theme-option active" data-theme="original" onclick="setTheme('original')">
+            <div class="theme-preview" style="background: linear-gradient(135deg, #CE9FFC, #7367F0);"></div>
+            <div class="theme-name">经典MDUI</div>
+            <div class="theme-designer">Original</div>
+        </div>
+        <div class="theme-option" data-theme="rams" onclick="setTheme('rams')">
+            <div class="theme-preview" style="background: #2c3e50;"></div>
+            <div class="theme-name">极简功能</div>
+            <div class="theme-designer">Dieter Rams</div>
+        </div>
+        <div class="theme-option" data-theme="vignelli" onclick="setTheme('vignelli')">
+            <div class="theme-preview" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);"></div>
+            <div class="theme-name">现代网格</div>
+            <div class="theme-designer">Massimo Vignelli</div>
+        </div>
+        <div class="theme-option" data-theme="kusama" onclick="setTheme('kusama')">
+            <div class="theme-preview" style="background: #d81b60; border-radius: 50%;"></div>
+            <div class="theme-name">波点艺术</div>
+            <div class="theme-designer">Yayoi Kusama</div>
+        </div>
+        <div class="theme-option" data-theme="hadid" onclick="setTheme('hadid')">
+            <div class="theme-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+            <div class="theme-name">流动几何</div>
+            <div class="theme-designer">Zaha Hadid</div>
+        </div>
+        <div class="theme-option" data-theme="starry" onclick="setTheme('starry')">
+            <div class="theme-preview" style="background: linear-gradient(135deg, #1a1a2e, #6366f1, #8b5cf6); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 20%; left: 30%; width: 2px; height: 2px; background: white; border-radius: 50%; box-shadow: 0 0 2px white;"></div>
+                <div style="position: absolute; top: 60%; left: 70%; width: 1px; height: 1px; background: #a5b4fc; border-radius: 50%; box-shadow: 0 0 1px #a5b4fc;"></div>
+                <div style="position: absolute; top: 40%; left: 50%; width: 1px; height: 1px; background: white; border-radius: 50%;"></div>
+            </div>
+            <div class="theme-name">梦幻星空</div>
+            <div class="theme-designer">Kusama & Maeda</div>
+        </div>
+    </div>
+</div>
+
+<main class="mdui-container">
+    <div class="mdui-card">
+        <img class="mdui-img-circle mdui-center" style="width: 150px;" src="https://cdn.jsdelivr.net/gh/5ime/img/avatar.jpg" referrerpolicy="no-referrer"/>
+        <h1 class='mdui-text-center'>在线短视频去水印解析</h1>
+        <div class="mdui-typo">
+            <p><strong>目前支持: </strong>抖音/皮皮虾/火山/微视/最右/快手/全民小视频/皮皮搞笑/梨视频/西瓜/微博/虎牙/绿洲/好看/逗拍/美拍/新片场/A站/全民K歌/6间房</p>
+            <p>
+                <strong>温馨提示: </strong><br/>
+                1. 粘贴视频地址时<u>无需删除文案</u><small> 但如果视频链接正确但解析失败请删掉文案后重试</small><br/>
+                2. 点击下载视频跳转时, 可能会被对应网站识别, 报 <u>403 Forbidden</u>, 可以在 下载视频 按钮, 右键复制链接地址, 新开浏览器标签页打开即可
+            </p>
+            <hr/>
+        </div>
+        <div class="mdui-card-content mdui-typo">
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <input class="mdui-textfield-input" type="text" id="url" placeholder="请粘贴视频分享地址" required/>
+                <div class="mdui-textfield-error">
+                    需要解析的视频地址不能为空
+                </div>
+                <!-- 解析按钮 -->
+                <button class="mdui-btn mdui-color-theme-accent mdui-ripple" onclick="setValue()"><span>解析</span></button>
+                <!-- 新增清空按钮 -->
+                <button class="mdui-btn mdui-color-red mdui-ripple" onclick="clearInput()"><span>清空</span></button>
+            </div>
+        </div>
+        <div class="down mdui-text-center"></div>
+    </div>
+</main>
+
+
+<script src="/static/js/theme.js" defer></script>
+<script src="/static/js/parse.js" defer></script>
+<script src="/static/js/download.js" defer></script>
+</body>
+</html>

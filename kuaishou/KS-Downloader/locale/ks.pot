@@ -1,0 +1,451 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <yonglelolu@foxmail.com>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: KS-Downloader V1.6\n"
+"Report-Msgid-Bugs-To: <yonglelolu@foxmail.com>\n"
+"POT-Creation-Date: 2026-07-05 09:45+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:103
+msgid "请输入快手账号链接："
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:117
+msgid "读取并写入 Cookie 成功！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:113
+msgid "请输入快手作品链接："
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:133
+msgid "请选择 KS-Downloader 功能"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:148
+msgid "启用"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:149
+msgid "禁用"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:142
+msgid "从浏览器读取 Cookie"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:154
+msgid "批量下载链接作品"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:156
+msgid "下载记录功能"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:159
+msgid "检查程序版本更新"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:160
+msgid "切换语言"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:185
+msgid "检测新版本失败"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:191
+msgid "修改设置成功！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:206
+#, python-brace-format
+msgid "项目地址：{repo}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:208
+#, python-brace-format
+msgid "开源协议：{licence}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:221
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:523
+msgid "提取作品链接失败"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:246
+#, python-brace-format
+msgid "URL 解析失败：{url}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:257
+msgid "获取作品数据失败"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:342
+msgid "提取账号链接失败"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:384
+msgid "是否已仔细阅读上述免责声明(YES/NO): "
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:463
+msgid "跳转至项目 GitHub 仓库"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:464
+msgid "重定向至项目 GitHub 仓库主页"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:472
+msgid "获取作品分享链接的重定向链接"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:493
+msgid "请求重定向链接成功！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:498
+msgid "请求重定向链接失败！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:505
+msgid "获取作品数据"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\app\app.py:533
+msgid "获取作品数据成功"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\config.py:62
+#, python-brace-format
+msgid "配置文件编码错误：{error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\config.py:63
+msgid "本次运作将会使用默认配置参数！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\config.py:71
+msgid "已创建默认配置文件"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:77
+msgid "timeout 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:83
+msgid "max_retry 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:90
+msgid "max_workers 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:107
+#, python-brace-format
+msgid "代理 {proxy} 测试成功"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:110
+#, python-brace-format
+msgid "代理 {proxy} 测试超时"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:113
+#, python-brace-format
+msgid "代理 {proxy} 测试失败：{error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:126
+msgid ""
+"work_path 参数不是有效的文件夹路径，程序将使用 项目根路径/Volume 作为储存路径"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:142
+msgid "folder_name 参数不是有效的文件夹名称，程序将使用默认值：Download"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:151
+msgid "cookies 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:157
+msgid "download_cover 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:163
+#, python-brace-format
+msgid "参数 {name} 错误，使用默认值: {default}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:173
+msgid "download_chunk 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:184
+#, python-brace-format
+msgid "name_format 参数包含未知字段: {field}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:191
+msgid "name_length 参数错误"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:195
+msgid "name_length 参数过小"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\config\parameter.py:202
+msgid "impersonate 参数无效"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:128
+#, python-brace-format
+msgid "作品 {detail_id} 存在下载记录，跳过下载！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:138
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:204
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:174
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:323
+msgid "视频"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:146
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:231
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:108
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:326
+msgid "图片"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:155
+msgid "未知的作品类型"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:183
+msgid "音乐"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:252
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:264
+msgid "封面"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:286
+#, python-brace-format
+msgid "【{type}】{name} 下载链接为空"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:302
+#, python-brace-format
+msgid "【{type}】{name} 缓存异常，重新下载"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:327
+#, python-brace-format
+msgid "【{type}】{name} 下载完成"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:339
+#, python-brace-format
+msgid "未知的文件类型：{content_type}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\downloader\downloader.py:356
+#, python-brace-format
+msgid "{filename} 已存在，跳过下载"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:44
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:68
+msgid "提取网页数据失败"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:59
+msgid "获取网页内容失败"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\extract\extractor.py:359
+msgid "未知"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\request\template.py:229
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\request\template.py:254
+#, python-brace-format
+msgid "{note}数据响应内容异常：{response}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\request\template.py:243
+#, python-brace-format
+msgid "{note}数据响应内容为空"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\static\internal.py:17
+msgid ""
+"关于 KS-Downloader 的 免责声明：\n"
+"\n"
+"1. 使用者对本项目的使用由使用者自行决定，并自行承担风险。作者对使用者使用本项"
+"目所产生的任何损失、责任、或风险概不负责。\n"
+"2. 本项目的作者提供的代码和功能是基于现有知识和技术的开发成果。作者按现有技术"
+"水平努力确保代码的正确性和安全性，但不保证代码完全没有错误或缺陷。\n"
+"3. 本项目依赖的所有第三方库、插件或服务各自遵循其原始开源或商业许可，使用者需"
+"自行查阅并遵守相应协议，作者不对第三方组件的稳定性、安全性及合规性承担任何责"
+"任。\n"
+"4. 使用者在使用本项目时必须严格遵守 GNU General Public License v3.0 的要求，"
+"并在适当的地方注明使用了 GNU General Public License v3.0 的代码。\n"
+"5. 使用者在使用本项目的代码和功能时，必须自行研究相关法律法规，并确保其使用行"
+"为合法合规。任何因违反法律法规而导致的法律责任和风险，均由使用者自行承担。\n"
+"6. 使用者不得使用本工具从事任何侵犯知识产权的行为，包括但不限于未经授权下载、"
+"传播受版权保护的内容，开发者不参与、不支持、不认可任何非法内容的获取或分"
+"发。\n"
+"7. 本项目不对使用者涉及的数据收集、存储、传输等处理活动的合规性承担责任。使用"
+"者应自行遵守相关法律法规，确保处理行为合法正当；因违规操作导致的法律责任由使"
+"用者自行承担。\n"
+"8. 使用者在任何情况下均不得将本项目的作者、贡献者或其他相关方与使用者的使用行"
+"为联系起来，或要求其对使用者使用本项目所产生的任何损失或损害负责。\n"
+"9. 本项目的作者不会提供 KS-Downloader 项目的付费版本，也不会提供与 KS-"
+"Downloader 项目相关的任何商业服务。\n"
+"10. 基于本项目进行的任何二次开发、修改或编译的程序与原创作者无关，原创作者不"
+"承担与二次开发行为或其结果相关的任何责任，使用者应自行对因二次开发可能带来的"
+"各种情况负全部责任。\n"
+"11. 本项目不授予使用者任何专利许可；若使用本项目导致专利纠纷或侵权，使用者自"
+"行承担全部风险和责任。未经作者或权利人书面授权，不得使用本项目进行任何商业宣"
+"传、推广或再授权。\n"
+"12. 作者保留随时终止向任何违反本声明的使用者提供服务的权利，并可能要求其销毁"
+"已获取的代码及衍生作品。\n"
+"13. 作者保留在不另行通知的情况下更新本声明的权利，使用者持续使用即视为接受修"
+"订后的条款。\n"
+"\n"
+"在使用本项目的代码和功能之前，请您认真考虑并接受以上免责声明。如果您对上述声"
+"明有任何疑问或不同意，请不要使用本项目的代码和功能。如果您使用了本项目的代码"
+"和功能，则视为您已完全理解并接受上述免责声明，并自愿承担使用本项目的一切风险"
+"和后果。\n"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\browser.py:50
+#, python-brace-format
+msgid ""
+"读取指定浏览器的 Cookie 并写入配置文件\n"
+"注意：Windows 系统需要以管理员身份运行程序才能读取 Chromium、Chrome、Edge 浏"
+"览器 Cookie！\n"
+"{options}\n"
+"请输入浏览器名称或序号："
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\browser.py:60
+msgid "未选择浏览器！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\browser.py:72
+msgid "浏览器名称或序号输入错误！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\browser.py:78
+msgid "获取 Cookie 失败，Cookie 数据为空！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\browser.py:80
+msgid "获取 Cookie 失败，未找到 Cookie 数据！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\browser.py:123
+msgid "从浏览器读取 Cookie 功能不支持当前平台！"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\capture.py:14
+#, python-brace-format
+msgid "网络异常：{error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\capture.py:16
+#, python-brace-format
+msgid "响应内容异常：{error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\capture.py:18
+#, python-brace-format
+msgid "权限异常：{error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:56
+#, python-brace-format
+msgid "{old_folder} 文件夹不存在，跳过处理"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:82
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:101
+msgid "文件夹"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:85
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:104
+#, python-brace-format
+msgid "文件夹 {old_folder} 重命名为 {new_folder}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:170
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:184
+msgid "文件"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:173
+#, python-brace-format
+msgid "文件 {old_file} 重命名为 {new_file}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:191
+#, python-brace-format
+msgid "{type} {old}被占用，重命名失败: {error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:198
+#, python-brace-format
+msgid "{type} {new}名称重复，重命名失败: {error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\mapping.py:205
+#, python-brace-format
+msgid "处理{type} {old}时发生预期之外的错误: {error}"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\retry.py:9
+#, python-brace-format
+msgid "正在进行第 {count} 次重试"
+msgstr ""
+
+#: C:\Users\You\PycharmProjects\KS-Downloader\source\tools\retry.py:24
+msgid ""
+"如需重新尝试处理该对象，请关闭所有正在访问该对象的窗口或程序，然后直接按下回"
+"车键！\n"
+"如需跳过处理该对象，请输入任意字符后按下回车键！"
+msgstr ""
+
+msgid ""
+"\n"
+"**参数**:\n"
+"\n"
+"- **text**: 作品链接，自动提取；必需参数\n"
+"- **cookies**: 请求数据时使用的 Cookie；可选参数\n"
+"- **proxy**: 请求数据时使用的代理；可选参数\n"
+msgstr ""
+
+msgid ""
+"\n"
+"**参数**:\n"
+"\n"
+"- **text**: 包含作品链接的文本；必需参数\n"
+"- **proxy**: 请求数据时使用的代理；可选参数\n"
+msgstr ""

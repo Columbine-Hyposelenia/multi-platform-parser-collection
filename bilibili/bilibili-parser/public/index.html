@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="application-name" content="视频去水印助手">
+    <meta name="theme-color" content="#E8836B">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    <title>视频去水印助手@2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ==================== 核心变量 (蜜桃奶茶 + 暗樱粉主题) ==================== */
+        :root {
+            --primary: #E8836B;
+            /* 蜜桃珊瑚粉 */
+            --primary-hover: #D4705A;
+            --blue: #5BA3C0;
+            /* 柔和的蓝 */
+            --text-main: #5D4E4A;
+            /* 深棕色文字 */
+            --text-gray: #8B7D78;
+
+            /* 白天主题：奶茶粉色毛玻璃（更透明，能看到背景轮廓） */
+            --bg-body: #F5E6E0;
+            --bg-card: rgba(245, 228, 222, 0.35);
+            /* 更透明！ */
+            --bg-input: rgba(242, 225, 218, 0.30);
+            /* 输入框更透明！ */
+            --bg-bar: rgba(248, 235, 228, 0.4);
+            --border: rgba(200, 150, 140, 0.3);
+
+            --radius: 16px;
+            --shadow: 0 8px 32px rgba(180, 130, 120, 0.1);
+            --shadow-float: 0 8px 32px rgba(232, 131, 107, 0.18);
+            --ease: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+            /* 毛玻璃模糊度（降低，让背景更清晰） */
+            --backdrop-blur: blur(12px);
+        }
+
+        /* 🌸 暗樱粉夜间主题 - 深玫红+暗粉，优雅护眼 */
+        body.dark-theme {
+            --primary: #FF9BB8;
+            /* 樱花粉 */
+            --blue: #7ECCE8;
+            /* 柔和天蓝 */
+            --text-main: #F8EDF2;
+            --text-gray: #D4B8C8;
+
+            /* 暗樱粉毛玻璃（透明度高，能看到背景） */
+            --bg-body: #1C0E18;
+            /* 深玫红底 */
+            --bg-card: rgba(45, 22, 38, 0.38);
+            /* 更透明！ */
+            --bg-input: rgba(38, 18, 32, 0.35);
+            /* 更透明！ */
+            --bg-bar: rgba(50, 25, 42, 0.4);
+            --border: rgba(255, 155, 184, 0.25);
+            /* 樱粉边框 */
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+        }
+
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 1. 背景图容器 - 二次元美少女背景 */
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 0.8s ease, filter 0.8s ease, background-image 0.8s ease;
+            /* 默认渐变背景（在线图片加载前显示） */
+            background-image: linear-gradient(135deg, #ffeef5 0%, #fff0f5 50%, #ffe4ec 100%);
+        }
+
+        /* 暗色主题默认背景 */
+        body.dark-theme .background-image {
+            background-image: linear-gradient(135deg, #2d1934 0%, #231428 50%, #321937 100%);
+        }
+
+        /* 白天主题背景图 - 明显的二次元美少女 */
+        body.light-theme .background-image {
+            opacity: 0.7;
+            /* 提高透明度，让美少女更明显 */
+            filter: blur(3px) brightness(1.05) saturate(1.1);
+        }
+
+        /* 黑夜主题背景图 - 暗色调二次元美少女 */
+        body.dark-theme .background-image {
+            opacity: 0.55;
+            /* 提高透明度 */
+            filter: blur(3px) brightness(0.7) saturate(1.0);
+        }
+
+
+        /* 背景遮罩层 - 淡粉色毛玻璃遮罩 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            transition: background 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* 白天：奶茶粉半透明遮罩（更透明，背景清晰可见） */
+        body.light-theme::before {
+            background: linear-gradient(135deg,
+                    rgba(245, 230, 222, 0.35) 0%,
+                    /* 奶茶粉 */
+                    rgba(248, 235, 228, 0.30) 30%,
+                    /* 浅奶茶 */
+                    rgba(242, 228, 220, 0.35) 60%,
+                    /* 蜜桃奶茶 */
+                    rgba(245, 230, 222, 0.35) 100%);
+        }
+
+        /* 🌸 黑夜：暗樱粉半透明遮罩（背景清晰可见） */
+        body.dark-theme::before {
+            background: linear-gradient(135deg,
+                    rgba(35, 15, 28, 0.45) 0%,
+                    /* 深玫红 */
+                    rgba(28, 12, 22, 0.40) 30%,
+                    /* 暗樱色 */
+                    rgba(38, 18, 30, 0.45) 60%,
+                    /* 深玫瑰 */
+                    rgba(32, 14, 25, 0.45) 100%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        /* ==================== 关键样式更新 ==================== */
+
+        /* 2. 给所有卡片添加毛玻璃效果 */
+        .header,
+        .main-card .super-search-box,
+        .result-card,
+        .batch-item,
+        .settings-sidebar,
+        .modal-content,
+        .history-dropdown,
+        .footer {
+            backdrop-filter: var(--backdrop-blur);
+            /* 核心：背景模糊 */
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            /* Safari 支持 */
+            border: 1px solid var(--border);
+            /* 加上淡淡的边框 */
+        }
+
+        /* ==================== 头部 ==================== */
+        /* 3. 头部特殊处理：更通透 */
+        .header {
+            background: rgba(248, 235, 228, 0.45);
+            /* 奶茶粉，更透明 */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(180, 130, 120, 0.06);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border-bottom: 1px solid var(--border);
+        }
+
+        body.dark-theme .header {
+            background: rgba(40, 20, 35, 0.45);
+            /* 暗樱粉，更透明 */
+        }
+
+        /* 登录弹窗暗色模式 */
+        body.dark-theme #loginModal>div {
+            background: rgba(35, 25, 32, 0.98) !important;
+            border: 1px solid rgba(255, 155, 184, 0.2);
+        }
+
+        body.dark-theme #loginModal>div h3 {
+            color: var(--primary) !important;
+        }
+
+        body.dark-theme #loginModal>div>div:first-of-type {
+            background: rgba(255, 255, 255, 0.95) !important;
+            /* 二维码区保持白色 */
+            border-color: rgba(255, 155, 184, 0.3) !important;
+        }
+
+        body.dark-theme #loginModal>div p {
+            color: var(--text-gray) !important;
+        }
+
+        body.dark-theme #loginModal>div button:last-child {
+            background: rgba(50, 35, 45, 0.8) !important;
+            border-color: rgba(255, 155, 184, 0.3) !important;
+            color: var(--text-main) !important;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: var(--primary);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo span {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-area button {
+
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .user-area button:hover {
+            opacity: 0.9;
+        }
+
+        .header-link-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #5BA3C0 0%, #4A90B0 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            margin-right: 10px;
+        }
+
+        .header-link-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .user-info-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-bar);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .vip-badge {
+            font-size: 0.7rem;
+            background: linear-gradient(135deg, #FB7299 0%, #FF9B8B 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(251, 114, 153, 0.3);
+        }
+
+        .vip-badge.normal {
+            background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+            box-shadow: 0 2px 6px rgba(107, 114, 128, 0.3);
+        }
+
+        /* ==================== 免责声明栏 ==================== */
+        .disclaimer-bar {
+            background: rgba(251, 114, 153, 0.1);
+            color: var(--primary);
+            padding: 12px 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid rgba(251, 114, 153, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            overflow: hidden;
+            /* 关键：隐藏溢出的滚动文字 */
+        }
+
+        .disclaimer-icon {
+            flex-shrink: 0;
+            animation: swing 2s ease-in-out infinite;
+            font-size: 1.1rem;
+        }
+
+        @keyframes swing {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            20% {
+                transform: rotate(15deg);
+            }
+
+            40% {
+                transform: rotate(-10deg);
+            }
+
+            60% {
+                transform: rotate(5deg);
+            }
+
+            80% {
+                transform: rotate(-5deg);
+            }
+        }
+
+        .marquee-container {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+            padding-left: 100%;
+            /* 从最右侧开始 */
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* ==================== 超级搜索框 (一体化设计) ==================== */
+        .main-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .super-search-box {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            /* 使用统一的边框样式 */
+            transition: all 0.3s var(--ease);
+            position: relative;
+            overflow: visible;
+            /* 允许下拉菜单溢出 */
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+        }
+
+        /* 聚焦时的光晕效果 */
+        .super-search-box:focus-within {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(0, 174, 236, 0.15);
+        }
+
+        /* 上半部分：纯文本区域 */
+        .input-area {
+            position: relative;
+            padding: 20px 20px 5px 20px;
+        }
+
+        /* 4. 输入框去白底，增强融合感 */
+        .url-input {
+            width: 100%;
+            height: 80px;
+            border: none;
+            padding: 0;
+            font-size: 1.05rem;
+            background: transparent;
+            color: var(--text-main);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            /* 增加文字立体感 */
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        .url-input::placeholder {
+            color: var(--text-gray);
+            opacity: 0.8;
+        }
+
+        /* 右下角工具栏 (历史记录) */
+        .input-tools {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 20px 10px 20px;
+        }
+
+        .history-trigger {
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+
+        .history-trigger:hover {
+            color: var(--blue);
+            background: var(--bg-input);
+        }
+
+        /* 清空按钮 */
+        .clear-all-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .clear-all-btn:hover {
+            color: #FF6699;
+            background: rgba(255, 102, 153, 0.1);
+        }
+
+        /* 下半部分：控制面板 (预设+按钮) */
+        .control-panel {
+            background: var(--bg-input);
+            border-top: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 0 0 var(--radius) var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .preset-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* 允许内容横向滚动 */
+            min-width: 0;
+        }
+
+        /* 画质行 + 下拉菜单布局 */
+        .quality-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quality-row .mini-segment {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* 处理方式下拉菜单（小巧） */
+        .format-dropdown {
+            flex-shrink: 0;
+            padding: 4px 6px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--bg-card);
+            color: var(--text-main);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+            min-width: 50px;
+        }
+
+        .format-dropdown:hover {
+            border-color: var(--primary);
+        }
+
+        .format-dropdown:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(232, 131, 107, 0.2);
+        }
+
+        body.dark-theme .format-dropdown {
+            background: var(--bg-input);
+            border-color: var(--border);
+        }
+
+        /* 紧凑型滑动条 */
+        .mini-segment {
+            position: relative;
+            display: flex;
+            background: var(--bg-card);
+            /* 反色：面板是灰的，条是白的 */
+            border-radius: 6px;
+            padding: 3px;
+            user-select: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            /* 支持横向滚动 */
+            overflow-x: auto;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .mini-segment::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .glider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--blue);
+            /* 选中色 */
+            border-radius: 4px;
+            transition: all 0.3s var(--ease);
+            z-index: 1;
+            width: 0;
+            opacity: 0.15;
+            /* 提高可见度 */
+        }
+
+        /* 选中状态的高亮逻辑 */
+        .mini-segment.quality-mode .glider {
+            background: var(--primary);
+            opacity: 0.15;
+            /* 提高可见度 */
+        }
+
+        .segment-opt {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            text-align: center;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: color 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-width: 60px;
+            /* 防止挤压 */
+        }
+
+        .segment-opt:hover {
+            color: var(--text-main);
+        }
+
+        .segment-opt.active {
+            color: var(--blue) !important;
+            font-weight: 600;
+        }
+
+        /* 不支持的画质 - 灰色禁用 */
+        .segment-opt.unsupported {
+            opacity: 0.4 !important;
+            pointer-events: none !important;
+            cursor: not-allowed;
+        }
+
+        /* 针对画质行的选中色 */
+        .mini-segment.quality-mode .segment-opt.active {
+            color: var(--primary) !important;
+        }
+
+        .vip-tag {
+            font-size: 0.6rem;
+            background: var(--primary);
+            color: white;
+            padding: 0px 3px;
+            border-radius: 2px;
+            opacity: 0.6;
+            transform: scale(0.9);
+        }
+
+        .segment-opt.active .vip-tag {
+            opacity: 1;
+        }
+
+        /* 处理按钮 */
+        .parse-btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            height: 46px;
+            /* 与两行预设高度匹配 */
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 174, 236, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .parse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 174, 236, 0.4);
+            filter: brightness(1.05);
+        }
+
+        /* 历史记录下拉面板 */
+        .history-dropdown {
+            position: fixed;
+            top: 140px;
+            right: 20px;
+            width: 300px;
+            background: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: all 0.2s var(--ease);
+        }
+
+        .history-dropdown.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .history-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            background: var(--bg-bar);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .history-items {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .history-row {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 1px solid var(--bg-input);
+        }
+
+        .history-row:hover {
+            background: var(--bg-input);
+        }
+
+        .history-row-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-row-title {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-row-meta {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+
+        .history-row-delete {
+            color: var(--text-gray);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .history-row-delete:hover {
+            color: #FF6699;
+        }
+
+        /* ==================== 进度条区域 ==================== */
+        .progress-section {
+            background: var(--bg-bar);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .progress-track {
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--blue);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-info {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* ==================== 结果卡片 ==================== */
+        /* 5. 结果卡片优化 */
+        .result-card {
+            background: var(--bg-card);
+            /* 使用半透明背景 */
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 25px;
+            animation: slideIn 0.3s ease;
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--border);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cover-box {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            aspect-ratio: 16/10;
+            background: #000;
+        }
+
+        .cover-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: 0.2s;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .cover-box:hover .cover-overlay {
+            opacity: 1;
+        }
+
+        .info-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #FF8EB3);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: auto;
+            box-shadow: 0 4px 12px rgba(251, 114, 153, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(251, 114, 153, 0.4);
+        }
+
+        /* ==================== 批量列表 ==================== */
+        .batch-list {
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .batch-item {
+            background: var(--bg-card);
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            display: flex;
+            gap: 15px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .batch-thumb {
+            width: 100px;
+            height: 56px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .batch-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .batch-title {
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        .batch-status {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .batch-status.success {
+            color: #10B981;
+        }
+
+        .batch-status.error {
+            color: #F59E0B;
+        }
+
+        /* 侧边设置栏 */
+        .settings-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 300px;
+            background: var(--bg-card);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: 0.3s;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-sidebar.active {
+            transform: translateX(0);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+
+        .settings-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+        }
+
+        .settings-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-bar);
+            color: var(--text-main);
+        }
+
+        /* 公告弹窗 */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--bg-card);
+            width: 90%;
+            max-width: 450px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-float);
+            overflow: hidden;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--border);
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--primary), #FF8EB3);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            background: var(--bg-input);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .dont-show-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            cursor: pointer;
+        }
+
+        .dont-show-option input {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+        }
+
+        /* 通用 */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .float-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 90;
+        }
+
+        .float-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: var(--blue);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .float-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .float-btn.setting {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .float-btn.setting:hover {
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--bg-bar);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .result-card {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .parse-btn {
+                height: 40px;
+                justify-content: center;
+            }
+
+            .history-dropdown {
+                width: auto;
+                left: 20px;
+                top: 90px;
+            }
+        }
+
+        /* 移动端：VIP 标签与文字防重叠 */
+        @media (max-width: 540px) {
+            .quality-row .segment-opt {
+                flex-direction: column;
+                line-height: 1.2;
+                gap: 2px;
+                padding: 6px 6px;
+            }
+
+            .quality-row .vip-tag {
+                font-size: 0.55rem;
+                padding: 1px 4px;
+                margin-top: 2px;
+                transform: none;
+                opacity: 0.9;
+            }
+        }
+
+
+
+        /* ==================== 下载列表侧边栏 ==================== */
+        .download-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 360px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2000;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border);
+        }
+
+        .download-sidebar.hidden {
+            transform: translateX(100%);
+        }
+
+        .download-sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, var(--primary), #e91e63);
+            color: white;
+        }
+
+        .download-sidebar-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .download-sidebar-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .download-sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 🔧 队列控制按钮 */
+        .download-sidebar-controls {
+            display: flex;
+            gap: 8px;
+            padding: 12px 15px;
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .download-control-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .download-control-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .download-control-btn.danger:hover {
+            background: #ff4444;
+            border-color: #ff4444;
+        }
+
+        .download-sidebar-body {
+
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .download-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-gray);
+        }
+
+        .download-empty i {
+            font-size: 3rem;
+            opacity: 0.3;
+            margin-bottom: 15px;
+        }
+
+        .download-empty p {
+            font-size: 0.95rem;
+        }
+
+        .download-item {
+            background: var(--bg-input);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .download-item:hover {
+            border-color: var(--primary);
+        }
+
+        .download-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .download-item-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            word-break: break-all;
+            line-height: 1.4;
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .download-item-cancel {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .download-item-cancel:hover {
+            background: rgba(255, 100, 100, 0.1);
+            color: #ff4444;
+        }
+
+        .download-item-progress {
+            height: 6px;
+            background: var(--bg-bar);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .download-item-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #e91e63);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .download-item-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .download-item-stage {
+            color: var(--primary);
+        }
+
+        .download-item-percent {
+            font-weight: 600;
+        }
+
+        .download-item.completed {
+            border-color: #10b981;
+        }
+
+        .download-item.completed .download-item-progress-fill {
+            background: #10b981;
+        }
+
+        .download-item.completed .download-item-stage {
+            color: #10b981;
+        }
+
+        .download-item.error {
+            border-color: #ff4444;
+        }
+
+        .download-item.error .download-item-progress-fill {
+            background: #ff4444;
+        }
+
+        .download-item.error .download-item-stage {
+            color: #ff4444;
+        }
+
+        .download-item.cancelled {
+            opacity: 0.6;
+            border-color: var(--text-gray);
+        }
+
+        .download-item.paused {
+            border-color: #f59e0b;
+        }
+
+        .download-item.paused .download-item-progress-fill {
+            background: #f59e0b;
+        }
+
+        .download-item.paused .download-item-stage {
+            color: #f59e0b;
+        }
+
+        .download-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .download-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .float-buttons-group {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .float-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .float-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .download-list-btn {
+            background: linear-gradient(135deg, var(--primary), #e91e63);
+        }
+
+        .download-list-btn:hover {
+            box-shadow: 0 6px 20px rgba(251, 114, 153, 0.5);
+        }
+
+        .download-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+
+        @media (max-width: 768px) {
+            .download-sidebar {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .float-buttons-group {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .float-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="dark-theme">
+    <!-- 背景图容器 -->
+    <div class="background-image" id="backgroundImage"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <a href="#" class="logo"><i class="fas fa-video"></i> <span>视频去水印助手@2025</span></a>
+            <div class="user-area">
+                <a href="https://video.qhouse.asia/" target="_blank" class="header-link-btn" title="其他平台短视频工具">
+                    <i class="fas fa-globe"></i> 其他平台
+                </a>
+                <div id="loginBtnArea">
+                    <button onclick="showLoginModal()">登录网站</button>
+                </div>
+                <div id="userInfoArea" class="user-info-display hidden">
+                    <img id="headerAvatar" class="user-avatar" src="" alt="User">
+                    <span id="headerName" class="user-name">用户</span>
+                    <span id="headerVipBadge" class="vip-badge hidden">大会员</span>
+                    <i class="fas fa-sign-out-alt" onclick="logout()"
+                        style="cursor:pointer; color:var(--text-gray); margin-left:8px;" title="退出登录"></i>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="container">
+
+
+
+        <!-- 免责声明 -->
+        <div class="disclaimer-bar">
+            <i class="fas fa-bullhorn disclaimer-icon"></i>
+            <div class="marquee-container">
+                <span class="marquee-text">免责声明：本工具仅供技术学习交流，严禁用于商业用途或非法下载版权内容。下载内容请遵循相关法律法规，使用者需自行承担法律责任，与本工具无关。</span>
+            </div>
+        </div>
+
+        <!-- 超级搜索框 -->
+        <div class="main-card">
+            <div class="super-search-box">
+                <!-- 上半部分：输入 -->
+                <div class="input-area">
+                    <textarea id="videoUrl" class="url-input" placeholder="粘贴视频链接 (支持批量/换行分隔)"></textarea>
+                </div>
+
+                <!-- 历史记录触发器 + 清空按钮 -->
+                <div class="input-tools">
+                    <button class="clear-all-btn" onclick="clearAll()" title="清空输入和结果">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="history-trigger" onclick="toggleHistory(event)">
+                        <i class="fas fa-history"></i> 历史记录
+                    </button>
+                </div>
+
+
+
+                <!-- 下半部分：内嵌控制面板 -->
+                <div class="control-panel">
+                    <div class="preset-container">
+                        <!-- 画质行 + 处理方式下拉 -->
+                        <div class="quality-row">
+                            <div class="mini-segment quality-mode" id="qualitySegment">
+                                <div class="glider"></div>
+                                <div class="segment-opt" data-val="120" onclick="setPreset('quality', 120, this)">
+                                    4K <span class="vip-tag">VIP</span>
+                                </div>
+                                <div class="segment-opt" data-val="116" onclick="setPreset('quality', 116, this)">
+                                    1080P高帧率 <span class="vip-tag">VIP</span>
+                                </div>
+                                <div class="segment-opt active" data-val="80" onclick="setPreset('quality', 80, this)">
+                                    1080P
+                                </div>
+                                <div class="segment-opt" data-val="64" onclick="setPreset('quality', 64, this)">
+                                    720P
+                                </div>
+                                <div class="segment-opt" data-val="32" onclick="setPreset('quality', 32, this)">
+                                    480P
+                                </div>
+                                <div class="segment-opt" data-val="16" onclick="setPreset('quality', 16, this)">
+                                    360P
+                                </div>
+                            </div>
+                            <!-- 处理方式下拉菜单 -->
+                            <select class="format-dropdown" id="formatDropdown"
+                                onchange="setFormatFromDropdown(this.value)">
+                                <option value="video+audio">完整</option>
+                                <option value="video+audio-separate">分离</option>
+                                <option value="cover">封面</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 统一去水印按钮 -->
+                    <button id="parseBtn" class="parse-btn">
+                        <i class="fas fa-search"></i> 去水印下载
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingSection" class="hidden" style="text-align: center; margin-top: 30px;">
+            <div class="loading-spinner"></div>
+            <span style="color: var(--text-gray);">正在处理...</span>
+        </div>
+
+        <!-- 单视频结果 -->
+        <div id="resultSection" class="result-card hidden">
+            <div class="cover-box">
+                <img id="resCover" src="" alt="Cover">
+                <a id="coverPlayBtn" href="#" target="_blank" class="cover-overlay"><i
+                        class="fas fa-play-circle"></i></a>
+            </div>
+            <div class="info-box">
+                <div>
+                    <div class="video-title" id="resTitle">视频标题</div>
+                    <div class="video-meta">
+                        <span id="resAuthor"><i class="fas fa-user"></i> UP主</span>
+                        <span id="resDuration"><i class="far fa-clock"></i> 00:00</span>
+                    </div>
+                </div>
+                <div>
+                    <button class="download-btn" id="downloadBtn" onclick="executeDownload()">
+                        <i class="fas fa-download"></i> 立即下载
+                    </button>
+                    <div style="font-size: 0.8rem; color: var(--text-gray); margin-top: 8px; text-align: center;">
+                        <i class="fas fa-info-circle"></i> 将使用预设: <span id="downloadHint">1080P</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 批量结果与进度条 -->
+        <div id="batchSection" class="hidden">
+            <div
+                style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="font-size: 1.1rem;">批量结果 (<span id="batchCount">0</span>)</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button onclick="clearBatch()"
+                        style="background:transparent; border:1px solid var(--border); padding:8px 15px; border-radius:6px; cursor:pointer; color:var(--text-gray); height:36px; font-size:0.9rem;">清空</button>
+                    <button id="downloadAllBtn" onclick="downloadAllBatch()" class="parse-btn"
+                        style="height:36px; font-size:0.9rem;"><i class="fas fa-download"></i> 全部下载</button>
+                </div>
+            </div>
+
+            <!-- 下载进度条 -->
+            <div id="progressSection" class="progress-section hidden">
+                <div class="progress-header">
+                    <span><i class="fas fa-spinner fa-spin"></i> <span id="progressStatus">正在处理...</span></span>
+                    <span id="progressNum">0/0</span>
+                </div>
+                <div class="progress-track">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div class="progress-info" id="progressInfo">准备中...</div>
+            </div>
+
+            <div id="batchList" class="batch-list"></div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div style="margin-bottom: 15px;">
+            <a href="javascript:void(0)" onclick="showAboutModal()" class="footer-link">关于我们</a>
+            <span style="margin: 0 15px; color: var(--text-gray);">|</span>
+            <a href="javascript:void(0)" onclick="showUsageModal()" class="footer-link">使用说明</a>
+            <span style="margin: 0 15px; color: var(--text-gray);">|</span>
+            <a href="javascript:void(0)" onclick="showFeedbackModal()" class="footer-link">建议反馈</a>
+        </div>
+        <div style="color: var(--text-gray); font-size: 0.85rem;">
+            视频去水印助手@2025 &copy; 2025
+        </div>
+    </footer>
+
+    <div class="float-btns">
+        <button class="float-btn setting" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
+        <button class="float-btn announcement-btn" onclick="checkAnnouncement(true)" style="background:#FF6699;"><i
+                class="fas fa-bullhorn"></i></button>
+        <button class="float-btn download-list-btn" onclick="toggleDownloadSidebar()" title="下载列表"
+            style="background:linear-gradient(135deg, var(--primary), #e91e63); position:relative;">
+            <i class="fas fa-download"></i>
+            <span class="download-badge" id="downloadBadge"
+                style="display:none; position:absolute; top:-5px; right:-5px; background:#ff4444; color:white; font-size:0.7rem; font-weight:700; min-width:20px; height:20px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0 5px;">0</span>
+        </button>
+    </div>
+
+    <!-- 设置侧边栏 -->
+    <div id="settingsOverlay" onclick="toggleSettings()"
+        style="position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999;" class="hidden"></div>
+    <div id="settingsSidebar" class="settings-sidebar">
+        <div class="settings-header">
+            <h3>设置</h3>
+            <button onclick="toggleSettings()" style="border:none; background:transparent; cursor:pointer;"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <div class="settings-group">
+            <span class="settings-label">文件命名格式</span>
+            <select id="filenameFormat" class="settings-select" onchange="saveSettings()">
+                <option value="title">仅标题</option>
+                <option value="title-author">标题 - UP主</option>
+                <option value="author-title">UP主 - 标题</option>
+            </select>
+        </div>
+        <div style="font-size:0.8rem; color:var(--text-gray); margin-top:auto;">v2.8.2 (Full Features)</div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden"
+        style="position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:flex; justify-content:center; align-items:center;">
+        <div
+            style="background:rgba(255,255,255,0.95); padding:30px; border-radius:16px; width:350px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3); backdrop-filter:blur(20px);">
+            <h3 style="margin-bottom:20px; color:var(--primary); font-size:1.3rem;">扫码登录</h3>
+            <div
+                style="width:200px; height:200px; background:#fff; margin:0 auto; display:flex; align-items:center; justify-content:center; border-radius:12px; border:2px solid #eee;">
+                <img id="qrImg" src="" style="width:100%; height:100%; display:none; border-radius:10px;">
+                <span id="qrText" style="color:#666;">二维码加载中...</span>
+            </div>
+            <p style="margin-top:15px; font-size:0.9rem; color:#666;">请使用 Bilibili 客户端扫码</p>
+            <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+                <button onclick="refreshQRCode()"
+                    style="padding:10px 20px; border:none; background:var(--primary); color:white; border-radius:8px; cursor:pointer; font-size:0.9rem;">刷新二维码</button>
+                <button onclick="closeLoginModal()"
+                    style="padding:10px 20px; border:1px solid #ddd; background:#f5f5f5; border-radius:8px; cursor:pointer; color:#666; font-size:0.9rem;">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gist Announcement Modal -->
+    <div id="announcementModal" class="hidden modal">
+        <div class="modal-overlay" onclick="closeAnnouncement()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color:white;"><i class="fas fa-bullhorn"></i> 公告</h3>
+                <button onclick="closeAnnouncement()"
+                    style="border:none; background:transparent; color:white; cursor:pointer;"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="announcementContent">
+                加载中...
+            </div>
+            <div class="modal-footer">
+                <label class="dont-show-option">
+                    <input type="checkbox" id="dontShowTodayCheckbox">
+                    <span>今日不再自动弹出</span>
+                </label>
+                <button onclick="closeAnnouncement()"
+                    style="padding:6px 15px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer;">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关于我们 Modal -->
+    <div id="aboutModal" class="hidden modal">
+        <div class="modal-overlay" onclick="closeAboutModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color:white;"><i class="fas fa-info-circle"></i> 关于我们</h3>
+                <button onclick="closeAboutModal()"
+                    style="border:none; background:transparent; color:white; cursor:pointer;"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <h4 style="color:var(--primary); margin-bottom:15px;">B站视频下载助手</h4>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:15px;">
+                    专注于B站视频下载的全栈工具，支持批量处理、收藏夹、用户投稿等功能。
+                </p>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:15px;">
+                    <strong>主要功能：</strong><br>
+                    • 多链接处理（单个、批量、收藏夹、用户投稿）<br>
+                    • 多格式下载（视音完整、分离、仅音频、纯画面、封面）<br>
+                    • 多画质支持（4K、1080P高帧率、1080P、720P 等）<br>
+                    • 网站登录、VIP 权限检测<br>
+                    • 现代化 UI（毛玻璃效果、主题切换、二次元背景）
+                </p>
+                <p style="line-height:1.8; color:var(--accent); font-size:0.9rem; margin-top:15px;">
+                    💡 建议登录B站账号后使用，可享受更好的体验和更高画质！
+                </p>
+                <p style="line-height:1.8; color:var(--text-gray); font-size:0.9rem; margin-top:15px;">
+                    版本：v3.0.0<br>
+                    更新日期：2025年12月10日
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAboutModal()"
+                    style="padding:6px 15px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer; margin:0 auto;">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用说明 Modal -->
+    <div id="usageModal" class="hidden modal">
+        <div class="modal-overlay" onclick="closeUsageModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color:white;"><i class="fas fa-book"></i> 使用说明</h3>
+                <button onclick="closeUsageModal()"
+                    style="border:none; background:transparent; color:white; cursor:pointer;"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="max-height:60vh; overflow-y:auto;">
+                <h4 style="color:var(--primary); margin-bottom:15px;">单链接去水印</h4>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:20px;">
+                    1. 在搜索框输入视频链接<br>
+                    2. 选择下载类型：视音完整、视音分离、仅音频、纯画面、封面<br>
+                    3. 选择视频格式（MP4/FLV/MKV/WebM）和音频格式（MP3/FLAC/AAC/M4A）<br>
+                    4. 选择画质（4K/1080P60/1080P+/1080P/720P 等）<br>
+                    5. 点击"去水印下载"
+                </p>
+
+                <h4 style="color:var(--primary); margin-bottom:15px;">批量处理</h4>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:20px;">
+                    1. 在搜索框输入多个链接（换行分隔）<br>
+                    2. 系统自动识别并批量处理<br>
+                    3. 点击"全部下载"或单独下载
+                </p>
+
+                <h4 style="color:var(--primary); margin-bottom:15px;">收藏夹处理</h4>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:20px;">
+                    1. 输入收藏夹链接或 ID<br>
+                    &nbsp;&nbsp;&nbsp;链接格式：https://space.bilibili.com/xxx/favlist?fid=xxx<br>
+                    &nbsp;&nbsp;&nbsp;或直接输入收藏夹 ID：1765119834<br>
+                    2. 系统自动处理收藏夹内所有视频<br>
+                    3. 批量下载
+                </p>
+
+                <h4 style="color:var(--primary); margin-bottom:15px;">用户投稿处理</h4>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:20px;">
+                    1. 输入用户主页链接<br>
+                    &nbsp;&nbsp;&nbsp;格式：https://space.bilibili.com/522224434<br>
+                    2. 系统自动处理所有投稿视频<br>
+                    3. 批量下载
+                </p>
+
+                <h4 style="color:var(--primary); margin-bottom:15px;">登录建议</h4>
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:20px;">
+                    <span style="color:var(--accent);">💡 建议登录B站账号后使用！</span><br>
+                    • 登录后可获取更高画质（1080P+、4K）<br>
+                    • 用户投稿解析功能需要登录才能使用<br>
+                    • VIP 用户可下载会员专属画质<br>
+                    • 登录后系统会自动检测您的权限
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeUsageModal()"
+                    style="padding:6px 15px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer; margin:0 auto;">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 建议反馈 Modal -->
+    <div id="feedbackModal" class="hidden modal">
+        <div class="modal-overlay" onclick="closeFeedbackModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="color:white;"><i class="fas fa-comment-dots"></i> 建议反馈</h3>
+                <button onclick="closeFeedbackModal()"
+                    style="border:none; background:transparent; color:white; cursor:pointer;"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="line-height:1.8; color:var(--text-main); margin-bottom:20px;">
+                    感谢您的使用！如果您有任何建议或反馈，欢迎联系我们。
+                </p>
+                <div style="background:var(--bg-input); padding:20px; border-radius:8px; margin-bottom:20px;">
+                    <h4 style="color:var(--primary); margin-bottom:15px; font-size:1rem;">联系方式</h4>
+                    <p style="line-height:1.8; color:var(--text-main); margin-bottom:10px;">
+                        <strong>GitHub Issues：</strong><br>
+                        <a href="https://github.com/YiQing-House/bilibili-parser/issues" target="_blank"
+                            style="color:var(--primary); text-decoration:none;">
+                            https://github.com/YiQing-House/bilibili-parser/issues
+                        </a>
+                    </p>
+                    <p style="line-height:1.8; color:var(--text-gray); font-size:0.9rem; margin-top:15px;">
+                        <em>其他联系方式将在后续更新中添加...</em>
+                    </p>
+                </div>
+                <p style="line-height:1.8; color:var(--text-gray); font-size:0.85rem;">
+                    我们会认真对待每一条反馈，感谢您的支持！
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeFeedbackModal()"
+                    style="padding:6px 15px; background:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer; margin:0 auto;">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录下拉菜单（移到body最外层解决z-index问题） -->
+    <div class="history-dropdown" id="historyDropdown">
+        <div class="history-header">
+            <span><i class="far fa-clock"></i> 最近记录</span>
+            <span onclick="clearHistory()" style="cursor:pointer; color:#FF6699;">清空</span>
+        </div>
+        <div class="history-items" id="historyDropdownList">
+            <!-- JS 动态填充 -->
+        </div>
+    </div>
+
+    <!-- 下载列表侧边栏 -->
+    <div id="downloadSidebar" class="download-sidebar hidden">
+        <div class="download-sidebar-header">
+            <h3><i class="fas fa-download"></i> 下载列表</h3>
+            <button onclick="toggleDownloadSidebar()" class="download-sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <!-- 🔧 队列控制按钮 -->
+        <div class="download-sidebar-controls">
+            <button id="pauseQueueBtn" onclick="pauseDownloadQueue()" title="暂停队列" class="download-control-btn">
+                <i class="fas fa-pause"></i>
+            </button>
+            <button id="resumeQueueBtn" onclick="resumeDownloadQueue()" title="恢复队列" class="download-control-btn"
+                style="display:none;">
+                <i class="fas fa-play"></i>
+            </button>
+            <button onclick="clearCompletedDownloads()" title="清除已完成" class="download-control-btn">
+                <i class="fas fa-broom"></i>
+            </button>
+            <button onclick="cancelAllDownloads()" title="取消全部" class="download-control-btn danger">
+                <i class="fas fa-stop"></i>
+            </button>
+        </div>
+        <div class="download-sidebar-body" id="downloadList">
+            <div class="download-empty">
+                <i class="fas fa-inbox"></i>
+                <p>暂无下载任务</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 下载侧边栏遮罩 -->
+    <div id="downloadOverlay" class="download-overlay" onclick="toggleDownloadSidebar()"></div>
+
+    <script src="/script.js?v=1765289500"></script>
+
+</body>
+
+</html>

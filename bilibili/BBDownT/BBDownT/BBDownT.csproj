@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>BBDownT</PackageId>
+    <Version>2.0.2</Version>
+    <Authors>LOVAHE</Authors>
+    <Description>BBDownT是一个免费且便捷高效的哔哩哔哩下载/解析软件.</Description>
+    <PackageProjectUrl>https://github.com/LOVAHE/BBDownT</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LOVAHE/BBDownT</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPackable>true</IsPackable>
+    <StartupObject></StartupObject>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>BBDownT</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BBDownT.Core\BBDownT.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BBDownT.Tests" />
+  </ItemGroup>
+
+</Project>

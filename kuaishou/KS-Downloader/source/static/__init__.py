@@ -1,0 +1,12 @@
+from .internal import (
+    VOLUME,
+    VERSION_MINOR,
+    VERSION_MAJOR,
+    VERSION_BETA,
+    PROJECT_NAME,
+    RELEASES,
+    REPOSITORY,
+    DISCLAIMER_TEXT,
+    LICENCE,
+    __VERSION__,
+)

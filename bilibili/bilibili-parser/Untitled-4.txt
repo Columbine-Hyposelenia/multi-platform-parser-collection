@@ -1,0 +1,110 @@
+// 服务器模式需要完整的arg列表
+            if (commandLineResult.CommandResult.Command.Name.ToLower() == "serve")
+            {
+                return await parser.InvokeAsync(args.ToArray());
+            }
+            newArgsList.Add(commandLineResult.CommandResult.Command.Name);
+            return await parser.InvokeAsync(newArgsList.ToArray());
+        }
+
+        foreach (var item in commandLineResult.CommandResult.Children)
+        {
+            if (item is ArgumentResult a)
+            {
+                newArgsList.Add(a.Tokens[0].Value);
+            }
+            else if (item is OptionResult o)
+            {
+                newArgsList.Add("--" + o.Option.Name);
+                newArgsList.AddRange(o.Tokens.Select(t => t.Value));
+            }
+        }
+
+        if (newArgsList.Contains("--debug"))
+        {
+            Config.DEBUG_LOG = true;
+        }
+
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.White;
+        var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
+        Console.Write($"BBDown version {ver.Major}.{ver.Minor}.{ver.Build}, Bilibili Downloader.\r\n");
+        Console.ResetColor();
+        Console.Write("遇到问题请首先到以下地址查阅有无相关信息：\r\nhttps://github.com/nilaoda/BBDown/issues\r\n");
+        Console.WriteLine();
+
+        //处理配置文件
+        BBDownConfigParser.HandleConfig(newArgsList, rootCommand);
+
+        return await parser.InvokeAsync(newArgsList.ToArray());
+    }
+
+    private static Task RunApp(MyOption myOption)
+    {
+        //检测更新
+        _ = CheckUpdateAsync();
+        return DoWorkAsync(myOption);
+    }
+
+    private static void StartServer(string? listenUrl)
+    {
+        var defaultListenUrl = "http://0.0.0.0:23333";
+        //检测更新
+        _ = CheckUpdateAsync();
+        var server = new BBDownApiServer();
+        server.SetUpServer();
+        server.Run(string.IsNullOrEmpty(listenUrl) ? defaultListenUrl : listenUrl);
+    }
+
+    public static (Dictionary<string, byte> encodingPriority, Dictionary<string, int> dfnPriority, string? firstEncoding,
+        bool downloadDanmaku, BBDownDanmakuFormat[] downloadDanmakuFormats, string input, string savePathFormat, string lang, string aidOri, int delay)
+        SetUpWork(MyOption myOption)
+    {
+        //处理废弃选项
+        HandleDeprecatedOptions(myOption);
+
+        //处理冲突选项
+        HandleConflictingOptions(myOption);
+
+        //寻找并设置所需的二进制文件路径
+        FindBinaries(myOption);
+
+        //切换工作目录
+        ChangeWorkingDir(myOption);
+
+        //解析优先级
+        var encodingPriority = ParseEncodingPriority(myOption, out var firstEncoding);
+        var dfnPriority = ParseDfnPriority(myOption);
+
+        //优先使用用户设置的UA
+        HTTPUtil.UserAgent = string.IsNullOrEmpty(myOption.UserAgent) ? HTTPUtil.UserAgent : myOption.UserAgent;
+
+        bool downloadDanmaku = myOption.DownloadDanmaku || myOption.DanmakuOnly;
+        BBDownDanmakuFormat[] downloadDanmakuFormats = ParseDownloadDanmakuFormats(myOption);
+
+        string input = myOption.Url;
+        string savePathFormat = myOption.FilePattern;
+        string lang = myOption.Language;
+        string aidOri = ""; //原始aid
+        int delay = Convert.ToInt32(myOption.DelayPerPage);
+        Config.DEBUG_LOG = myOption.Debug;
+        Config.HOST = myOption.Host;
+        Config.EPHOST = myOption.EpHost;
+        Config.TVHOST = myOption.TvHost;
+        Config.AREA = myOption.Area;
+        Config.COOKIE = myOption.Cookie;
+        Config.TOKEN = myOption.AccessToken.Replace("access_token=", "");
+
+        LogDebug("AppDirectory: {0}", APP_DIR);
+        LogDebug("运行参数：{0}", JsonSerializer.Serialize(myOption, MyOptionJsonContext.Default.MyOption));
+        return (encodingPriority, dfnPriority, firstEncoding, downloadDanmaku, downloadDanmakuFormats, input, savePathFormat, lang, aidOri, delay);
+    }
+
+    public static async Task<(string fetchedAid, VInfo vInfo, string apiType)> GetVideoInfoAsync(MyOption myOption, string aidOri, string input)
+    {
+        // 加载认证信息
+        LoadCredentials(myOption);
+
+        // 检测是否登录了账号
+        if (myOption is { UseIntlApi: false, UseTvApi: false } && Config.AREA == "")
+        {

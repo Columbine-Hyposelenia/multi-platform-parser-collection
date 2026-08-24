@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="视频去水印助手图标">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFB8C9"/>
+      <stop offset="1" stop-color="#E8836B"/>
+    </linearGradient>
+    <linearGradient id="play" x1="28" y1="22" x2="44" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7ECCE8"/>
+      <stop offset="1" stop-color="#5BA3C0"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)"/>
+  <rect x="11" y="17" width="42" height="30" rx="8" fill="#FFFFFF" opacity="0.14"/>
+  <rect x="11" y="17" width="42" height="30" rx="8" fill="none" stroke="#FFFFFF" stroke-width="2.6" opacity="0.9"/>
+  <path d="M28 23.5 44 32 28 40.5Z" fill="url(#play)" stroke="#ffffff" stroke-width="2" stroke-linejoin="round" opacity="0.95"/>
+  <rect x="16" y="19" width="6" height="26" rx="3" fill="#FFFFFF" opacity="0.25"/>
+  <rect x="42" y="19" width="6" height="26" rx="3" fill="#FFFFFF" opacity="0.25"/>
+  <circle cx="19" cy="48.5" r="2" fill="#FFFFFF" opacity="0.72"/>
+  <circle cx="45" cy="14" r="2" fill="#FFFFFF" opacity="0.8"/>
+  <path d="M22 12c1.5 0 2.8 1.3 2.8 2.8S23.5 17.6 22 17.6 19.2 16.3 19.2 14.8 20.5 12 22 12Z" fill="#FFFFFF" opacity="0.86"/>
+</svg>
+
