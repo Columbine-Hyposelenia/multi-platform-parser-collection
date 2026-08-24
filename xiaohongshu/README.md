@@ -1,44 +1,35 @@
 # 小红书 Xiaohongshu / RedNote 解析方案
 
-## 平台分类
+## 平台分类（终审版）
 
-| 角色 | 项目名称 | 目录位置 | 说明 |
-|------|---------|---------|------|
-| **主专用解析** | XHS-Downloader | [`./XHS-Downloader/`](./XHS-Downloader/) | 图文/视频全格式，API 模式，Docker，无水印 |
-| **备用专用解析** | rednote-api | [`./rednote-api/`](./rednote-api/) | Rust+Axum 高性能 API，高分辨率图+原始视频 |
-| **备用链** | parsehub | [`../universal/parsehub/`](../universal/parsehub/) | 异步聚合解析，小红书视频+图文 |
-| **通用兜底** | media-parser / parse-video / gallery-dl / watermark-remover-server | [`../universal/`](../universal/) | 多平台通用 |
+| 角色 | 项目名称 | 目录位置 | 登录要求 |
+|------|---------|---------|---------|
+| **主专用解析** | XHS-Downloader | [`./XHS-Downloader/`](./XHS-Downloader/) | 免登录（720P）/ Cookie（最高质量） |
+| **备用专用解析** | rednote-api | [`./rednote-api/`](./rednote-api/) | 免登录（公开内容） |
 
-## 主用项目：XHS-Downloader
+## 主用：XHS-Downloader
 
 - **原作者**: JoeanAmier
-- **技术栈**: Python + AIOHTTP
-- **特点**:
-  - 采集小红书图文/视频作品信息
-  - 提取无水印图文/视频下载地址
-  - 支持 API 模式（FastAPI）
-  - Docker 容器化部署
-  - 支持从浏览器读取 Cookie
-  - 作品文件完整性处理机制
-- **质量**: 获取小红书无水印原图和原视频
+- **技术栈**: Python + AIOHTTP（异步）
+- **覆盖媒体**: 图文笔记（多图）、视频、Live 实况图、封面、音乐
+- **质量**: 无水印原图和原视频；匿名请求 720P 及以下，配置 Cookie 后获取最高质量
+- **网页部署**: 支持 API 模式（FastAPI），Docker 容器化部署，可直接嵌入网页后端
+- **特点**: 从浏览器读取 Cookie，作品文件完整性处理，支持批量下载
 
-## 备用项目：rednote-api
+## 备用：rednote-api
 
 - **技术栈**: Rust + Axum
-- **特点**:
-  - 高分辨率图片提取
-  - 原始视频 URL（无水印）
-  - 异步 Rust，性能极高
-- **适用场景**: 需要高性能 API 服务时
+- **覆盖媒体**: 高分辨率图片、原始视频（无水印）
+- **质量**: 无水印，提取高分辨率图和原始视频 URL
+- **网页部署**: Rust 异步 HTTP API，性能极高，Docker 部署
+- **适用场景**: 需要高性能 API 服务或主用项目因依赖问题时备用
 
-## 备用链：parsehub
+## 通用兜底
 
-- 支持小红书视频+图文解析
-- 异步 Python 库，可嵌入后端
+`parsehub` → `media-parser` → `gallery-dl` → `parse-video`（均在 `../universal/`）
 
 ## 注意事项
 
-- 部分内容需 Cookie 登录态获取最高质量
-- 匿名请求可能仅 720P 及以下
+- 最高质量（1080P+ 视频、原图）需 Cookie 登录态
 - 小红书 API 变更频繁，建议保持更新
-- 3D 图片格式需注意兼容性
+- 3D 图片格式需注意前端兼容性

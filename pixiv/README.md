@@ -1,47 +1,34 @@
 # Pixiv 解析方案
 
-## 平台分类
+## 平台分类（终审版）
 
-| 角色 | 项目名称 | 目录位置 | 说明 |
-|------|---------|---------|------|
-| **主专用解析** | gallery-dl | [`../universal/gallery-dl/`](../universal/gallery-dl/) | 图片解析最强，原图/动图/画师批量 |
-| **备用专用解析** | pixivpy-async | [`./pixivpy-async/`](./pixivpy-async/) | 异步 Pixiv API 库，纯 Python |
-| **备用链** | PixiC | [`./PixiC/`](./PixiC/) | Pixiv 专用批量下载+API |
-| **通用兜底** | — | — | gallery-dl 已足够覆盖 |
+| 角色 | 项目名称 | 目录位置 | 登录要求 |
+|------|---------|---------|---------|
+| **主专用解析** | gallery-dl | [`../universal/gallery-dl/`](../universal/gallery-dl/) | 免登录（公开内容）/ OAuth（完整） |
+| **需登录方案** | pixivpy-async | [`../login-required/pixivpy-async/`](../login-required/pixivpy-async/) | 需登录（access_token） |
 
-## 主用项目：gallery-dl
+## 主用：gallery-dl（免登录）
 
-- **Stars**: 19,000+ | **语言**: Python
-- **特点**:
-  - Pixiv 插画/漫画原图下载
-  - 动图（ugoira）转换为 zip 或 webm
-  - 按画师、收藏、标签、排行榜批量下载
-  - 支持 Pixiv Fanbox
-  - OAuth 认证获取更高权限
+- **Stars**: 19,000+ | **技术栈**: Python
+- **覆盖媒体**: 插画/漫画原图、动图（ugoira，转换为 zip 或 webm）
 - **质量**: 直接获取 Pixiv 原始图片 URL，无压缩
+- **网页部署**: Python 库嵌入后端，或 CLI 封装 API
+- **特点**: 按画师、收藏、标签、排行榜批量下载，支持 Pixiv Fanbox
+- **登录**: 免登录可下载公开内容，配置 OAuth refresh_token 后获取完整权限
 
-## 备用项目：pixivpy-async
+## 需登录方案：pixivpy-async
 
-- **原作者**: Mikubill | **Stars**: 160+
-- **技术栈**: Python (asyncio)
-- **特点**:
-  - 纯 Python 3 异步 Pixiv API
-  - 支持作品详情、画师信息、搜索、排行、收藏
-  - 可获取原图 URL 后自行下载
-  - 轻量级，适合嵌入异步后端
-- **适用场景**: 需要精细控制 API 调用、异步后端集成时
+> Pixiv 完整 API 调用需登录 token，本项目归入 `login-required/`，与免登录方案严格分离。
 
-## 备用链：PixiC
-
-- **技术栈**: Python
-- **特点**:
-  - Pixiv 插画批量下载
-  - 关注画师、收藏作品下载（单/多/动图）
-  - 提供 API 接口，多线程下载
+- **原作者**: Mikubill | **技术栈**: Python（asyncio）
+- **覆盖媒体**: 作品详情、画师信息、搜索、排行、收藏、原图 URL
+- **质量**: 通过 Pixiv API 获取原图地址，自行下载
+- **登录方式**: access_token / refresh_token（需 Pixiv 账号）
+- **网页部署**: 异步库嵌入 FastAPI 后端
+- **适用场景**: 需要精细控制 API 调用、搜索/排行/收藏等高级功能时
 
 ## 注意事项
 
-- Pixiv 需登录 Token 访问完整内容
-- R18 内容需账号设置对应权限
+- Pixiv 需登录 Token 访问完整内容，R18 内容需账号设置对应权限
 - 动图（ugoira）为帧序列，需转换为视频
-- 主用 gallery-dl 直接下载，备用 pixivpy-async 做 API 层灵活调用
+- 主用 gallery-dl 直接下载，需登录方案 pixivpy-async 做 API 层灵活调用

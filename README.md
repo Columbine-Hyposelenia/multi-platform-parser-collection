@@ -1,144 +1,101 @@
 # 多平台无水印解析开源项目合集
 
-> 覆盖国内外主流平台的无水印媒体解析开源项目集合，按平台分类收录，每个重点平台配备**唯一主专用解析 + 备用专用解析 + 通用解析兜底**三重保障，确保稳定获取原始文件或平台最高质量文件。
+> 面向网页集成的多平台媒体解析项目库。所有项目均经过终审，满足：**无水印、最高质量、长期稳定、可部署为后端服务/API**。
 
-## 收录标准
+## 终审标准
 
-- **无水印**：解析结果必须去除平台水印，返回原始文件或最高质量版本
-- **网页友好**：提供 HTTP API / 可作为后端服务部署 / 可嵌入网页应用
-- **免费开源**：完全免费，代码开源可审计
-- **维护活跃**：近期有提交，社区口碑良好，接口稳定
-- **媒体全覆盖**：支持视频、图片、音频、实况图(Live Photo)等多种媒体类型
+每个入库项目必须同时满足：
+1. **无水印** — 解析结果不带平台水印
+2. **最高质量** — 返回原始文件或平台可提供的最高质量版本
+3. **长期稳定** — 维护活跃，接口可靠，注意时效性
+4. **网页友好** — 提供 HTTP API / 可作为后端服务部署 / 可嵌入网页应用
 
-## 平台分类速查表
-
-| 平台 | 主专用解析 | 备用专用解析 | 通用解析兜底 |
-|------|-----------|-------------|-------------|
-| 🇨🇳 抖音 Douyin | [Douyin_TikTok_Download_API](./douyin/Douyin_TikTok_Download_API/) | [parsehub](./universal/parsehub/) | yt-dlp / cobalt / parse-video / media-parser |
-| 🌍 TikTok | [Douyin_TikTok_Download_API](./douyin/Douyin_TikTok_Download_API/) | [cobalt](./universal/cobalt/) → [parsehub](./universal/parsehub/) | yt-dlp |
-| 🇨🇳 B站 Bilibili | [BBDownT](./bilibili/BBDownT/)（最高质量8K/HDR/杜比） | [bilibili-parser](./bilibili/bilibili-parser/)（Web免登录） | yt-dlp / parsehub / cobalt |
-| 🇨🇳 小红书 Xiaohongshu | [XHS-Downloader](./xiaohongshu/XHS-Downloader/) | [rednote-api](./xiaohongshu/rednote-api/) → [parsehub](./universal/parsehub/) | media-parser / parse-video / gallery-dl |
-| 🇨🇳 快手 Kuaishou | [KS-Downloader](./kuaishou/KS-Downloader/) | [parsehub](./universal/parsehub/) → [Douyin_TikTok_Download_API](./douyin/Douyin_TikTok_Download_API/) | parse-video / media-parser / yt-dlp |
-| 🇨🇳 微博 Weibo | [parsehub](./universal/parsehub/) | [watermark-remover-server](./other/watermark-remover-server/) | gallery-dl / parse-video |
-| 🇨🇳 百度贴吧 Tieba | [Tieba-API-SCF](./tieba/Tieba-API-SCF/) | [parsehub](./universal/parsehub/) | — |
-| 🇨🇳 豆包 Doubao | [doubao-nomark](./doubao/doubao-nomark/)（无印豆包） | — | — |
-| 🌍 YouTube | [yt-dlp](./universal/yt-dlp/)（8K/HDR/VR） | [cobalt](./universal/cobalt/) → [parsehub](./universal/parsehub/) | — |
-| 🌍 X / Twitter | [cobalt](./universal/cobalt/) | [FxEmbed](./x-twitter/FxEmbed/)（fxtwitter嵌入）→ [parsehub](./universal/parsehub/) | gallery-dl / yt-dlp |
-| 🌍 Instagram | [instaloader](./instagram/instaloader/) | [cobalt](./universal/cobalt/) → [parsehub](./universal/parsehub/) | gallery-dl |
-| 🌍 Pixiv | [gallery-dl](./universal/gallery-dl/)（原图/动图） | [pixivpy-async](./pixiv/pixivpy-async/)（异步API）→ [PixiC](./pixiv/PixiC/) | — |
-| 🌍 Reddit | [cobalt](./universal/cobalt/) | [gallery-dl](./universal/gallery-dl/) | yt-dlp |
-| 🌍 SoundCloud | [cobalt](./universal/cobalt/) | [yt-dlp](./universal/yt-dlp/) | — |
-| 🌍 Twitch | [cobalt](./universal/cobalt/) | [yt-dlp](./universal/yt-dlp/) | — |
-| 🌍 Pinterest | [gallery-dl](./universal/gallery-dl/) | — | — |
-| 🇨🇳 小黑盒等小众 | [parsehub](./universal/parsehub/) | — | yt-dlp / cobalt |
-
-## 目录结构
+## 仓库结构
 
 ```
 .
-├── README.md                    # 本文件（总览 + 速查表）
-├── universal/                   # 通用解析项目（跨平台兜底）
-│   ├── yt-dlp/                  # 视频/音频通用解析（186k+ stars）
-│   ├── cobalt/                  # API 优先的通用媒体下载（40k+ stars）
-│   ├── gallery-dl/              # 图片通用解析（19k+ stars，Pixiv/Twitter强项）
-│   ├── parse-video/             # Go 语言国内多平台解析（22+ 平台）
-│   ├── media-parser/            # Python RESTful API，26 平台，支持 Live 实况
-│   └── parsehub/                # Python 异步聚合解析库（抖音/TikTok/小红书/微博/贴吧/B站/Instagram/YouTube等）
-├── douyin/                      # 抖音
-│   ├── Douyin_TikTok_Download_API/  # 主用：抖音+TikTok 异步解析 API
-│   └── parse-video-py/          # 备用：Python 多平台解析
-├── tiktok/                      # TikTok（国际版）
-│   └── README.md                # 主用指向 douyin 目录项目，备用为 cobalt/parsehub
-├── bilibili/                    # B站
-│   ├── BBDownT/                 # 主用：最高质量下载器，8K/HDR/杜比视界
-│   └── bilibili-parser/         # 备用：Web 端解析，免登录，4K/HDR
-├── xiaohongshu/                 # 小红书
-│   ├── XHS-Downloader/          # 主用：图文/视频全格式，API 模式，Docker
-│   └── rednote-api/             # 备用：Rust+Axum 高性能 API
-├── kuaishou/                    # 快手
-│   └── KS-Downloader/           # 主用：无水印视频/图片/音乐，API 模式
-├── weibo/                       # 微博
-│   └── README.md                # 主用 parsehub，备用 watermark-remover-server
-├── tieba/                       # 百度贴吧
-│   └── Tieba-API-SCF/           # 主用：HTTP API 服务，基于 Hono + tieba.js
-├── doubao/                      # 豆包
-│   └── doubao-nomark/           # 主用：无印豆包，AI 图片/视频无水印解析
-├── youtube/                     # YouTube
-│   └── README.md                # 主用 yt-dlp，备用 cobalt
-├── x-twitter/                   # X / Twitter
-│   ├── FxEmbed/                 # 备用：fxtwitter 嵌入修复，标准化 JSON
-│   └── README.md                # 主用 cobalt，备用 FxEmbed/parsehub
-├── instagram/                   # Instagram
-│   └── instaloader/             # 主用：13k+ stars，图片/视频/Stories
-├── pixiv/                       # Pixiv
-│   ├── pixivpy-async/           # 备用：异步 Pixiv API 库
-│   └── PixiC/                   # 备用：Pixiv 专用批量下载+API
-├── other/                       # 其他平台
-│   └── watermark-remover-server/ # 微博/公众号/抖音/小红书/快手多平台
-└── reddit/                      # Reddit（通用覆盖）
-    └── README.md
+├── universal/          # 通用解析（跨平台兜底）
+├── douyin/             # 抖音
+├── tiktok/             # TikTok（国际版）
+├── bilibili/           # B站
+├── xiaohongshu/        # 小红书
+├── kuaishou/           # 快手
+├── weibo/              # 微博
+├── tieba/              # 百度贴吧
+├── doubao/             # 豆包
+├── youtube/            # YouTube
+├── x-twitter/          # X / Twitter
+├── instagram/          # Instagram
+├── pixiv/              # Pixiv
+├── reddit/             # Reddit
+├── other/              # 其他平台工具
+└── login-required/     # 需登录方案（与免登录方案严格分离）
 ```
 
-## 通用解析项目详解
+## 平台速查表（终审版）
 
-### 1. yt-dlp (`universal/yt-dlp/`)
-- **Stars**: 186,000+ | **语言**: Python | **协议**: Unlicense
-- **定位**: 业界最强大的通用视频/音频解析器，支持 1000+ 网站
-- **平台覆盖**: YouTube(8K/HDR/VR/高帧率)、Bilibili、抖音、TikTok、Twitter/X、Vimeo、SoundCloud、Twitch 等
-- **媒体类型**: 视频、音频、字幕、播放列表
-- **网页部署**: 可作为 Python 库嵌入后端，或配合 metube 等 Web UI
-- **质量**: 可获取平台提供的最高质量，支持 bestvideo+bestaudio 合并
+> 每个重点平台：**唯一主专用解析** + **一个最高优先级备用** + 补足（如有）+ 需登录方案（如有）
 
-### 2. cobalt (`universal/cobalt/`)
-- **Stars**: 40,000+ | **语言**: JavaScript/Node.js | **协议**: AGPL-3.0
-- **定位**: API 优先的通用媒体下载器，无广告、无追踪、无缓存
-- **平台覆盖**: YouTube(8K/4K/HDR/VR)、TikTok(无水印视频/图集/原始音频)、X/Twitter(视频/GIF/多图)、Instagram、Reddit、SoundCloud、Vimeo、Pinterest、Twitch 等 20+ 平台
-- **媒体类型**: 视频、音频、图片、GIF
-- **网页部署**: Docker 一键部署，纯 API 后端，可直接对接前端
+| 平台 | 主专用解析（免登录） | 备用专用解析（免登录） | 补足 | 需登录方案 |
+|------|---------------------|----------------------|------|-----------|
+| **抖音** | Douyin_TikTok_Download_API | parsehub | — | — |
+| **TikTok** | Douyin_TikTok_Download_API | cobalt | — | — |
+| **B站** | bilibili-parser | yt-dlp | BBDownT（8K/杜比/Hi-Res） | — |
+| **小红书** | XHS-Downloader | rednote-api | — | — |
+| **快手** | KS-Downloader | parsehub | — | — |
+| **微博** | parsehub | watermark-remover-server | — | — |
+| **百度贴吧** | Tieba-API-SCF | parsehub | — | — |
+| **豆包** | doubao-nomark | — | — | — |
+| **YouTube** | yt-dlp | cobalt | — | — |
+| **X/Twitter** | cobalt | FxEmbed | — | — |
+| **Instagram** | cobalt | — | — | instaloader |
+| **Pixiv** | gallery-dl | — | — | pixivpy-async |
+| **Reddit** | cobalt | gallery-dl | — | — |
 
-### 3. gallery-dl (`universal/gallery-dl/`)
-- **Stars**: 19,000+ | **语言**: Python | **协议**: GPL-2.0
-- **定位**: 命令行图片/图集批量下载工具，图片解析领域最强
-- **平台覆盖**: Pixiv(原图/动图)、Twitter/X(原图/多图)、Instagram、Reddit、Tumblr、Pinterest、Danbooru 等 40+ 图站
-- **媒体类型**: 图片、动图(ugoira→zip/webm)、图集
-- **网页部署**: 可作为 Python 库调用，支持配置文件和 OAuth
+## 通用解析项目（universal/）
 
-### 4. parsehub (`universal/parsehub/`)
-- **语言**: Python (异步) | **协议**: MIT | **PyPI**: parsehub
-- **定位**: 轻量、异步、开箱即用的社交媒体聚合解析库
-- **平台覆盖**: 抖音/TikTok(视频+图文)、小红书(视频+图文)、微博(视频+图文)、百度贴吧(视频+图文)、B站(视频+动态)、Instagram(视频+图文)、YouTube(视频+音乐)、Facebook、Threads 等
-- **媒体类型**: 视频、图文、音乐、动态
-- **网页部署**: `pip install parsehub`，异步 API 可直接嵌入 FastAPI/后端服务
-- **特点**: 依赖 yt-dlp 作为底层引擎，统一封装国内+国外平台，维护活跃（月更）
+| 项目 | 技术栈 | 覆盖范围 | 定位 |
+|------|--------|---------|------|
+| **yt-dlp** | Python | 1000+ 站点，YouTube/B站/抖音/TikTok/Twitter/SoundCloud/Twitch | 视频/音频通用最强 |
+| **cobalt** | Node.js | YouTube/TikTok/X/Instagram/Reddit/SoundCloud/Pinterest/Twitch 等 20+ | API 优先，纯后端 |
+| **gallery-dl** | Python | Pixiv/Twitter/Instagram/Reddit/Tumblr/Pinterest 等 40+ 图站 | 图片/图集原图最强 |
+| **parsehub** | Python(异步) | 抖音/TikTok/小红书/微博/贴吧/B站/Instagram/YouTube 等 | 国内+国外聚合，`pip install` |
+| **parse-video** | Go | 抖音/快手/火山/微视/西瓜/AcFun 等 22+ 国内平台 | 国内平台高性能 |
+| **media-parser** | Python | 26 平台，RESTful API，支持 Live 实况图 | 专为 Web/小程序后端设计 |
 
-### 5. parse-video (`universal/parse-video/`)
-- **语言**: Go | **协议**: MIT
-- **定位**: 国内短视频平台多平台解析器，Go 语言高性能
-- **平台覆盖**: 抖音、快手、火山、微视、最右、全民小视频、皮皮虾、西瓜视频、虎牙、梨视频、AcFun、好看视频等 22+ 平台视频；抖音/快手/小红书/皮皮虾/微博图集
+## 需登录方案（login-required/）
 
-### 6. media-parser (`universal/media-parser/`)
-- **语言**: Python
-- **定位**: 高性能 RESTful API 解析去水印服务
-- **平台覆盖**: 抖音、快手、小红书等 26 个主流平台
-- **媒体类型**: 作者、标题、封面、视频、图集、音频、Live 实况图
-- **特点**: 下载器工厂模式，不依赖第三方解析服务，核心逻辑全本地
+> 以下项目需登录态（Cookie/Token）才能达到最高质量或正常使用，与免登录方案严格分离。
 
-## 各平台专用解析说明
+| 项目 | 适用平台 | 登录方式 | 说明 |
+|------|---------|---------|------|
+| **instaloader** | Instagram | Session/账号密码 | Instagram 图片/视频/Stories/Reels 完整下载，13k+ stars |
+| **pixivpy-async** | Pixiv | access_token/refresh_token | 异步 Pixiv API，作品/画师/搜索/排行完整调用 |
 
-各平台目录下的 `README.md` 详细说明了该平台的主用/备用/通用方案选择理由、部署方式和 API 用法。
+## 补足机制说明
 
-## 使用建议
+当主专用解析在某类媒体上未达最高质量，但整体仍为最优时，不替换主用，而是补充针对弱项的补足项目：
 
-1. **优先使用主专用解析**：针对特定平台优化，质量和稳定性最佳
-2. **主用失败时按链切换备用**：如 `cobalt → parsehub → yt-dlp`，多一层保障
-3. **通用解析作为兜底**：yt-dlp / cobalt / gallery-dl / parsehub 覆盖极广
-4. **组合部署**：建议将主用+备用+通用同时部署，通过路由层自动切换
-5. **parsehub 是国内平台的强力补充**：统一封装抖音/小红书/微博/贴吧/B站，异步高性能
+- **B站**：主用 bilibili-parser（Web 免登录，最高 4K）→ 补足 BBDownT（8K/杜比视界/Hi-Res，需登录大会员）
+- 补足项紧跟主用，标注"补足：媒体类型"，不另列主用，不与备用混放
 
-## 免责声明
+## 登录方案处理原则
 
-本仓库仅收录开源项目代码，供学习研究使用。使用者需遵守各平台服务条款及相关法律法规，不得用于侵犯版权或其他非法用途。各项目版权归原作者所有。
+1. **优先免登录**：主用和备用均选自无需登录即可使用的项目
+2. **需登录分离**：必须登录才能使用的项目归入 `login-required/`，不与免登录方案混放
+3. **部分需登录**：免登录可用但登录后质量更高的项目（如 BBDownT 补足项），保留原位并明确标注登录条件
+4. **最高质量优先**：需登录方案同样必须达到最高质量标准，否则不收录
 
-## 收录日期
+## 剔除记录（终审）
 
-2026-08-24（v2 复盘增补：新增 parsehub / doubao-nomark / instaloader / pixivpy-async / FxEmbed / Tieba-API-SCF）
+| 项目 | 剔除原因 |
+|------|---------|
+| parse-video-py | 与 parsehub 功能重叠，parsehub 更活跃、覆盖更广、异步性能更优 |
+| PixiC | 与 pixivpy-async 重叠，后者更标准（Mikubill 原作）、异步、API 更完整 |
+
+## 使用说明
+
+- 每个平台目录下的 `README.md` 详细说明主用/备用/补足的部署方式和 API 调用
+- 通用项目在 `universal/README.md` 中说明
+- 需登录项目在 `login-required/README.md` 中说明登录配置方式
+- 所有代码已完整复刻，可直接从本仓库获取，无需回原项目地址

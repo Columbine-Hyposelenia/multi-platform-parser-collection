@@ -1,38 +1,34 @@
 # 抖音 Douyin 解析方案
 
-## 平台分类
+## 平台分类（终审版）
 
-| 角色 | 项目名称 | 目录位置 | 说明 |
-|------|---------|---------|------|
-| **主专用解析** | Douyin_TikTok_Download_API | [`./Douyin_TikTok_Download_API/`](./Douyin_TikTok_Download_API/) | 异步 FastAPI，抖音+TikTok，视频/图集无水印 |
-| **备用专用解析** | parsehub | [`../universal/parsehub/`](../universal/parsehub/) | 异步聚合解析库，抖音视频+图文+日常 |
-| **备用链** | parse-video-py | [`./parse-video-py/`](./parse-video-py/) | Python 多平台解析 |
-| **通用兜底** | yt-dlp / cobalt / parse-video / media-parser | [`../universal/`](../universal/) | 跨平台通用 |
+| 角色 | 项目名称 | 目录位置 | 登录要求 |
+|------|---------|---------|---------|
+| **主专用解析** | Douyin_TikTok_Download_API | [`./Douyin_TikTok_Download_API/`](./Douyin_TikTok_Download_API/) | 免登录（公开内容） |
+| **备用专用解析** | parsehub | [`../universal/parsehub/`](../universal/parsehub/) | 免登录 |
 
-## 主用项目：Douyin_TikTok_Download_API
+## 主用：Douyin_TikTok_Download_API
 
 - **原作者**: Evil0ctal
-- **技术栈**: Python + FastAPI + HTTPX
-- **特点**:
-  - 高性能异步抖音/TikTok 数据爬取
-  - 支持视频和图集（图文）解析
-  - 提取作者、标题、封面、无水印视频地址、音乐
-  - 可直接作为 Python 库嵌入项目
-  - Docker 一键部署
+- **技术栈**: Python + FastAPI + HTTPX（异步）
+- **覆盖媒体**: 视频、图集（图文）、音乐、封面、作者信息
 - **质量**: 直接解析抖音 API 获取无水印原始视频地址
+- **网页部署**: FastAPI 原生 HTTP API，Docker 一键部署，可直接嵌入网页后端
+- **稳定性**: 持续维护，社区活跃，抖音+TikTok 双平台统一接口
 
-## 备用项目：parsehub
+## 备用：parsehub
 
-- **技术栈**: Python (异步) | **PyPI**: parsehub
-- **特点**:
-  - 支持抖音视频+图文+日常解析
-  - `pip install parsehub` 开箱即用
-  - 异步高性能，统一封装多平台
-- **适用场景**: 主用项目接口变更时备用，或需要统一多平台 SDK 时
+- **技术栈**: Python（异步）| **PyPI**: parsehub
+- **覆盖媒体**: 抖音视频+图文+日常
+- **质量**: 无水印，获取平台最高可用质量
+- **网页部署**: 异步库直接嵌入 FastAPI/后端，`pip install parsehub`
+- **适用场景**: 主用项目因抖音 API 变更临时失效时的第一备用
 
 ## 通用兜底
 
-- **yt-dlp**: 抖音视频解析
-- **cobalt**: 抖音/TikTok 无水印下载
-- **parse-video** (Go): 国内多平台高性能
-- **media-parser**: 26 平台 RESTful API，支持 Live 实况
+主用和备用均失效时：`cobalt` → `yt-dlp` → `parse-video` → `media-parser`（均在 `../universal/`）
+
+## 注意事项
+
+- 公开作品免登录即可解析，私密/好友可见作品需 Cookie
+- 抖音 API 变更频繁，建议保持最新版本
